@@ -2,6 +2,8 @@ package com.codegym.service.ticket;
 
 import com.codegym.model.ticket.BorrowTicket;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -12,7 +14,7 @@ public class BorrowTicketService implements IBorrowTicketService{
     private IBorrowTicketService borrowTicketService;
 
     @Override
-    public Iterable<BorrowTicket> findAll() {
+    public Page<BorrowTicket> findAll(Pageable pageable) {
         return null;
     }
 
