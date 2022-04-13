@@ -7,7 +7,7 @@ import org.springframework.data.domain.Pageable;
 import java.util.Optional;
 
 public interface IGeneralService<T> {
-    Page<T> findAll(Pageable pageable);
+    Iterable<T> findAll();
 
     T save(T t);
 
