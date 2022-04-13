@@ -18,7 +18,7 @@ public class Book {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String name;
+//    private String name;
 
     @ManyToOne
     @JoinColumn(name = "category_id")
