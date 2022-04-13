@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -49,14 +50,16 @@ public class CategoryController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Category> deleteCategory (@PathVariable Long id){
         Optional<Category> optionalCategory = categoryService.findById(id);
-        Iterable<Book> books = categoryService.findAllByCategory_Id(id);
+        List<Book> books = (List<Book>) categoryService.findAllByCategory_Id(id);
         if (!optionalCategory.isPresent()){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        else if (books != null){
+        else if (books.size() != 0){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        categoryService.deleteById(id);
-        return new ResponseEntity<>(optionalCategory.get(), HttpStatus.OK);
+        else {
+            categoryService.deleteById(id);
+            return new ResponseEntity<>(optionalCategory.get(), HttpStatus.OK);
+        }
     }
 }
