@@ -1,6 +1,6 @@
 package com.codegym.controller.category;
 
-import com.codegym.model.Book;
+import com.codegym.model.book.Book;
 import com.codegym.model.Category;
 import com.codegym.service.category.ICategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,13 +34,14 @@ public class CategoryController {
     }
 
     @PostMapping
-    public ResponseEntity<Category>saveCategory (@RequestBody Category category){
+    public ResponseEntity<Category> saveCategory(@RequestBody Category category) {
         return new ResponseEntity<>(categoryService.save(category), HttpStatus.CREATED);
     }
+
     @PutMapping("/{id}")
-    public ResponseEntity<Category> updateCategory(@PathVariable Long id,@RequestBody Category newCategory){
+    public ResponseEntity<Category> updateCategory(@PathVariable Long id, @RequestBody Category newCategory) {
         Optional<Category> category = categoryService.findById(id);
-        if (!category.isPresent()){
+        if (!category.isPresent()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         newCategory.setId(category.get().getId());
@@ -48,18 +49,16 @@ public class CategoryController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Category> deleteCategory (@PathVariable Long id){
+    public ResponseEntity<Category> deleteCategory(@PathVariable Long id) {
         Optional<Category> optionalCategory = categoryService.findById(id);
         List<Book> books = (List<Book>) categoryService.findAllByCategory_Id(id);
-        if (!optionalCategory.isPresent()){
+        if (!optionalCategory.isPresent()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        else if (books.size() != 0){
+        if (books.size() != 0) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        else {
-            categoryService.deleteById(id);
-            return new ResponseEntity<>(optionalCategory.get(), HttpStatus.OK);
-        }
+        categoryService.deleteById(id);
+        return new ResponseEntity<>(optionalCategory.get(), HttpStatus.OK);
     }
 }

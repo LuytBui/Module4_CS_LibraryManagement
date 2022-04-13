@@ -1,32 +1,27 @@
-package com.codegym.model;
+package com.codegym.model.book;
 
+import com.codegym.model.Category;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 
-import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
-@Entity
-@Table(name = "books")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Book {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class BookForm {
     private Long id;
 
     private String name;
 
-    @ManyToOne
-    @JoinColumn(name = "category_id")
     private Category category;
 
     private String description;
 
-    private String image;
+    private MultipartFile image;
 
     private String status;
 
@@ -36,9 +31,9 @@ public class Book {
 
     public static final String OLD = "Cũ";
     public static final String NEW = "Mới";
-    public static List<String> conditions = new ArrayList<>();
+    public static List<String> statuses = new ArrayList<>();
     static {
-        conditions.add(OLD);
-        conditions.add(NEW);
+        statuses.add(OLD);
+        statuses.add(NEW);
     }
 }
