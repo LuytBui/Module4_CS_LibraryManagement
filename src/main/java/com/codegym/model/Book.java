@@ -9,10 +9,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
+@Table(name = "books")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "books")
 public class Book {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,7 +28,7 @@ public class Book {
 
     private String image;
 
-    private String condition;
+    private String status;
 
     private String publisher;
 
