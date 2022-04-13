@@ -24,6 +24,7 @@ public class BorrowTicket {
 
     @Column(columnDefinition = "DATETIME")
     private String borrowDate;
+
     private int duration;
 
     private boolean accept;
