@@ -12,7 +12,7 @@ import java.util.Optional;
 
 @RestController
 @CrossOrigin("*")
-@RequestMapping("/returnTickets")
+@RequestMapping("/api/returnTickets")
 public class ReturnTicketController {
     @Autowired
     private IReturnTicketService returnTicketService;
@@ -34,13 +34,14 @@ public class ReturnTicketController {
 
     @PostMapping
     public ResponseEntity<ReturnTicket> saveReturnTicket(@RequestBody ReturnTicket returnTicket) {
+        returnTicket = new ReturnTicket(returnTicket.getId(), returnTicket.getBorrowTicket(), returnTicket.getReturnDate(), returnTicket.getStatus(), returnTicket.isAccept());
         return new ResponseEntity<>(returnTicketService.save(returnTicket), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ReturnTicket> updateReturnTicket(@PathVariable Long id,@RequestBody ReturnTicket newReturnTicket){
+    public ResponseEntity<ReturnTicket> updateReturnTicket(@PathVariable Long id, @RequestBody ReturnTicket newReturnTicket) {
         Optional<ReturnTicket> returnTicket = returnTicketService.findById(id);
-        if (!returnTicket.isPresent()){
+        if (!returnTicket.isPresent()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         newReturnTicket.setId(returnTicket.get().getId());
@@ -48,13 +49,13 @@ public class ReturnTicketController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<ReturnTicket> deleteReturnTicket(@PathVariable Long id){
+    public ResponseEntity<ReturnTicket> deleteReturnTicket(@PathVariable Long id) {
         Optional<ReturnTicket> optionalReturnTicket = returnTicketService.findById(id);
-        if (!optionalReturnTicket.isPresent()){
+        if (!optionalReturnTicket.isPresent()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         returnTicketService.deleteById(id);
-        return new ResponseEntity<>(optionalReturnTicket.get(),HttpStatus.OK);
+        return new ResponseEntity<>(optionalReturnTicket.get(), HttpStatus.OK);
     }
 }
 
