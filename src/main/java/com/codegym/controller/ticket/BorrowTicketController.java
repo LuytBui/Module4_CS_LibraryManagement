@@ -9,6 +9,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
 @RestController
@@ -34,6 +36,8 @@ public class BorrowTicketController {
 
     @PostMapping
     public ResponseEntity<BorrowTicket> createBorrowTicket(@RequestBody BorrowTicket borrowTicket) {
+        String borrowDate = getCurrentTime();
+        borrowTicket.setBorrowDate(borrowDate);
         return new ResponseEntity<>(borrowTicketService.save(borrowTicket), HttpStatus.CREATED);
     }
 
@@ -54,5 +58,11 @@ public class BorrowTicketController {
         }
         borrowTicketService.deleteById(id);
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    public String getCurrentTime() {
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        LocalDateTime now = LocalDateTime.now();
+        return String.valueOf(now);
     }
 }
