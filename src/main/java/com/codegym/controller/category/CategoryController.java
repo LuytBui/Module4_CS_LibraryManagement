@@ -1,5 +1,6 @@
 package com.codegym.controller.category;
 
+import com.codegym.model.Book;
 import com.codegym.model.Category;
 import com.codegym.service.category.ICategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +12,7 @@ import java.util.Optional;
 
 @RestController
 @CrossOrigin("*")
-@RequestMapping("/categories")
+@RequestMapping("/api/categories")
 public class CategoryController {
     @Autowired
     ICategoryService categoryService;
@@ -48,8 +49,12 @@ public class CategoryController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Category> deleteCategory (@PathVariable Long id){
         Optional<Category> optionalCategory = categoryService.findById(id);
+        Iterable<Book> books = categoryService.findAllByCategory_Id(id);
         if (!optionalCategory.isPresent()){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        else if (books != null){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         categoryService.deleteById(id);
         return new ResponseEntity<>(optionalCategory.get(), HttpStatus.OK);
