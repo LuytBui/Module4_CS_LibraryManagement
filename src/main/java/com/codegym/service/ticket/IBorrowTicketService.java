@@ -1,7 +1,7 @@
 package com.codegym.service.ticket;
 
-import org.springframework.stereotype.Service;
+import com.codegym.model.ticket.BorrowTicket;
+import com.codegym.service.IGeneralService;
 
-@Service
-public interface IBorrowTicketService {
+public interface IBorrowTicketService extends IGeneralService<BorrowTicket> {
 }
