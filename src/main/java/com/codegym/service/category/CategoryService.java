@@ -1,6 +1,8 @@
 package com.codegym.service.category;
 
+import com.codegym.model.Book;
 import com.codegym.model.Category;
+import com.codegym.repository.IBookRepository;
 import com.codegym.repository.ICategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -11,6 +13,8 @@ import java.util.Optional;
 
 @Service
 public class CategoryService implements ICategoryService{
+	@Autowired
+	IBookRepository bookRepository;
 	@Autowired
 	private ICategoryRepository categoryRepository;
 
@@ -34,9 +38,8 @@ public class CategoryService implements ICategoryService{
 		categoryRepository.deleteById(id);
 	}
 
-
 	@Override
-	public void deleteCategoryByProcedure(Long id) {
-		categoryRepository.deleteCategoryByProcedure(id);
+	public Iterable<Book> findAllByCategory_Id(Long id) {
+		return bookRepository.findAllByCategory_Id(id);
 	}
 }
