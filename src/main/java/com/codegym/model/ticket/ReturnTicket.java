@@ -25,7 +25,12 @@ public class ReturnTicket {
     private String returnDate;
 
     private String status;
-    private boolean accept;
+
+    @Column(columnDefinition = "boolean default false")
+    private boolean isAccepted;
+
+    @Column(columnDefinition = "boolean default false")
+    private boolean isReviewed;
 
     public static final String OVERDUE = "Quá hạn";
     public static final String RETURNED = "Đã trả";
