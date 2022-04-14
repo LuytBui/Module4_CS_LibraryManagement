@@ -36,8 +36,6 @@ public class BorrowTicketController {
 
     @PostMapping
     public ResponseEntity<BorrowTicket> createBorrowTicket(@RequestBody BorrowTicket borrowTicket) {
-        String borrowDate = getCurrentTime();
-        borrowTicket.setBorrowDate(borrowDate);
         return new ResponseEntity<>(borrowTicketService.save(borrowTicket), HttpStatus.CREATED);
     }
 
@@ -58,6 +56,30 @@ public class BorrowTicketController {
         }
         borrowTicketService.deleteById(id);
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PostMapping("/{id}/accept")
+    public ResponseEntity<?> acceptBorrowTicket(@PathVariable Long id) {
+        Optional<BorrowTicket> borrowTicketOptional = borrowTicketService.findById(id);
+        if (!borrowTicketOptional.isPresent()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        BorrowTicket borrowTicket = borrowTicketOptional.get();
+        borrowTicket.setReviewed(true);
+        borrowTicket.setAccept(true);
+        return new ResponseEntity<>(borrowTicket, HttpStatus.OK);
+    }
+
+    @PostMapping("/{id}/deny")
+    public ResponseEntity<?> denyBorrowTicket(@PathVariable Long id) {
+        Optional<BorrowTicket> borrowTicketOptional = borrowTicketService.findById(id);
+        if (!borrowTicketOptional.isPresent()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        BorrowTicket borrowTicket = borrowTicketOptional.get();
+        borrowTicket.setReviewed(true);
+        borrowTicket.setAccept(false);
+        return new ResponseEntity<>(borrowTicket, HttpStatus.OK);
     }
 
     public String getCurrentTime() {
