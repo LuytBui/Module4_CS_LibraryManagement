@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 @Service
 public class BookService implements IBookService{
@@ -40,5 +41,15 @@ public class BookService implements IBookService{
     @Override
     public Page<Book> findAllByNameContaining(String name, Pageable pageable) {
         return bookRepository.findAllByNameContaining(name, pageable);
+    }
+
+    @Override
+    public Page<Book> findAllByPublisher(String publisher, Pageable pageable) {
+        return bookRepository.findAllByPublisher(publisher, pageable);
+    }
+
+    @Override
+    public List<String> findAllPublisher() {
+        return bookRepository.findAllPublisher();
     }
 }
