@@ -1,6 +1,8 @@
 package com.codegym.controller.ticket;
 
+import com.codegym.model.Book;
 import com.codegym.model.ticket.BorrowTicket;
+import com.codegym.service.ticket.IBorrowTicketDetailService;
 import com.codegym.service.ticket.IBorrowTicketService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -11,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -19,6 +22,9 @@ import java.util.Optional;
 public class BorrowTicketController {
     @Autowired
     private IBorrowTicketService borrowTicketService;
+
+    @Autowired
+    private IBorrowTicketDetailService borrowTicketDetailService;
 
     @GetMapping
     public ResponseEntity<Page<BorrowTicket>> findAllBorrowTickets(Pageable pageable) {
@@ -88,5 +94,17 @@ public class BorrowTicketController {
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         LocalDateTime now = LocalDateTime.now();
         return String.valueOf(now);
+    }
+
+    // get   /id /detail (@PathVar Long id)
+    // => tra ve danh sach cac book trong ticket
+    @GetMapping("{id}/details")
+    public ResponseEntity<List<Book>> findBooksInTicket(@PathVariable Long id) {
+        Optional<BorrowTicket> borrowTicketOptional = borrowTicketService.findById(id);
+        if (!borrowTicketOptional.isPresent()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        List<Book> books = borrowTicketDetailService.findAllBookByBorrowTicket(id);
+        return new ResponseEntity<>(books, HttpStatus.OK);
     }
 }
