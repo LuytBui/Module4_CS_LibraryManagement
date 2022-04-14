@@ -1,6 +1,6 @@
 package com.codegym.service.category;
 
-import com.codegym.model.Book;
+import com.codegym.model.book.Book;
 import com.codegym.model.Category;
 import com.codegym.service.IGeneralService;
 
