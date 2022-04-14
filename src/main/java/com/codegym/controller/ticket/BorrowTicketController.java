@@ -9,6 +9,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
 @RestController
@@ -54,5 +56,36 @@ public class BorrowTicketController {
         }
         borrowTicketService.deleteById(id);
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PostMapping("/{id}/accept")
+    public ResponseEntity<?> acceptBorrowTicket(@PathVariable Long id) {
+        Optional<BorrowTicket> borrowTicketOptional = borrowTicketService.findById(id);
+        if (!borrowTicketOptional.isPresent()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        BorrowTicket borrowTicket = borrowTicketOptional.get();
+        borrowTicket.setReviewed(true);
+        borrowTicket.setAccepted(true);
+        borrowTicket.setBorrowDate(getCurrentTime());
+        return new ResponseEntity<>(borrowTicket, HttpStatus.OK);
+    }
+
+    @PostMapping("/{id}/deny")
+    public ResponseEntity<?> denyBorrowTicket(@PathVariable Long id) {
+        Optional<BorrowTicket> borrowTicketOptional = borrowTicketService.findById(id);
+        if (!borrowTicketOptional.isPresent()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        BorrowTicket borrowTicket = borrowTicketOptional.get();
+        borrowTicket.setReviewed(true);
+        borrowTicket.setAccepted(false);
+        return new ResponseEntity<>(borrowTicket, HttpStatus.OK);
+    }
+
+    public String getCurrentTime() {
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        LocalDateTime now = LocalDateTime.now();
+        return String.valueOf(now);
     }
 }
