@@ -65,12 +65,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/image/**",
                         "/api/login",
                         "/api/register").permitAll()
-                .antMatchers("/api/returnTickets/**").permitAll()
-                .antMatchers("/api/books/**").permitAll()
-                .antMatchers("/api/categories/**").permitAll()
-//                .antMatchers("/api/products/**", "/api/categories/**", "/api/files")
-//                .access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
-                .anyRequest().authenticated();
+                .antMatchers("/api/returnTickets/**").authenticated()
+                .antMatchers("/api/borrowTickets/**").authenticated()
+                .antMatchers("/api/books/**").authenticated()
+                .antMatchers("/api/categories/**").authenticated()
+                ;
 
         http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling().accessDeniedHandler(customAccessDeniedHandler());
