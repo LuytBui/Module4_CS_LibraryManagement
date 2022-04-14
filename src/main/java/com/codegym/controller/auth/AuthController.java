@@ -1,5 +1,6 @@
 package com.codegym.controller.auth;
 
+import com.codegym.model.auth.ErrorMessage;
 import com.codegym.model.auth.JwtResponse;
 import com.codegym.model.auth.UserRegisterForm;
 import com.codegym.model.user.Role;
@@ -38,14 +39,14 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody UserRegisterForm userRegisterForm){
         if (!userRegisterForm.confirmPasswordMatch()){
-            String message = "confirmPassword does not match!";
-            return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
+            ErrorMessage errorMessage = new ErrorMessage("Mật khẩu nhập lại không khớp!");
+            return new ResponseEntity<>(errorMessage, HttpStatus.BAD_REQUEST);
         }
 
         Optional<User> findUser = userService.findByUsername(userRegisterForm.getUsername());
         if (findUser.isPresent()){
-            String message = "Username is existed";
-            return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
+            ErrorMessage errorMessage = new ErrorMessage("Tài khoản đã tồn tại!");
+            return new ResponseEntity<>(errorMessage, HttpStatus.BAD_REQUEST);
         }
 
         User user = new User();
@@ -66,8 +67,14 @@ public class AuthController {
         Optional<User> findUser = userService.findByUsername(inputUsername);
 
         if (!findUser.isPresent()){
-            String message = "User is not existed";
-            return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
+            ErrorMessage errorMessage = new ErrorMessage("Tài khoản không tồn tại");
+            return new ResponseEntity<>(errorMessage, HttpStatus.BAD_REQUEST);
+        }
+
+        boolean matchPassword = passwordEncoder.matches(inputPassword, findUser.get().getPassword());
+        if (!matchPassword){
+            ErrorMessage errorMessage = new ErrorMessage("Mật khẩu không đúng");
+            return new ResponseEntity<>(errorMessage, HttpStatus.BAD_REQUEST);
         }
 
         Authentication authentication = authenticationManager.authenticate(
