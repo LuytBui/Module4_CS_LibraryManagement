@@ -2,6 +2,7 @@ package com.codegym.config;
 
 import com.codegym.config.custom.CustomAccessDeniedHandler;
 import com.codegym.config.custom.RestAuthenticationEntryPoint;
+import com.codegym.model.user.Role;
 import com.codegym.service.user.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -67,8 +68,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/api/register").permitAll()
                 .antMatchers("/api/returnTickets/**").authenticated()
                 .antMatchers("/api/borrowTickets/**").authenticated()
-                .antMatchers("/api/books/**").authenticated()
-                .antMatchers("/api/categories/**").authenticated()
+
+                .antMatchers(HttpMethod.POST, "/api/books/**").hasAnyRole(Role.ROLE_ADMIN, Role.ROLE_LIBRARIAN)
+                .antMatchers(HttpMethod.PUT, "/api/books/**").hasAnyRole(Role.ROLE_ADMIN, Role.ROLE_LIBRARIAN)
+                .antMatchers(HttpMethod.DELETE, "/api/books/**").hasAnyRole(Role.ROLE_ADMIN, Role.ROLE_LIBRARIAN)
+                .antMatchers(HttpMethod.GET, "/api/books/**").permitAll()
+
+                .antMatchers(HttpMethod.POST, "/api/categories/**").hasAnyRole(Role.ROLE_ADMIN, Role.ROLE_LIBRARIAN)
+                .antMatchers(HttpMethod.PUT, "/api/categories/**").hasAnyRole(Role.ROLE_ADMIN, Role.ROLE_LIBRARIAN)
+                .antMatchers(HttpMethod.DELETE, "/api/categories/**").hasAnyRole(Role.ROLE_ADMIN, Role.ROLE_LIBRARIAN)
+                .antMatchers(HttpMethod.GET, "/api/categories/**").permitAll()
+
                 .antMatchers("/api/changePassword").authenticated()
                 ;
 

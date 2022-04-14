@@ -92,9 +92,9 @@ public class AuthController {
 
     @PostMapping("/changePassword")
     public ResponseEntity<?> changeCurrentUserPassword(
-            @RequestBody ChangePasswordForm changePasswordForm,
-            Principal principal
+            @RequestBody ChangePasswordForm changePasswordForm
     ) {
+        Principal principal = SecurityContextHolder.getContext().getAuthentication();
         if (!changePasswordForm.confirmPasswordMatch()){
             ErrorMessage errorMessage = new ErrorMessage("Mật khẩu nhập lại không khớp!");
             return new ResponseEntity<>(errorMessage, HttpStatus.BAD_REQUEST);
