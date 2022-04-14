@@ -55,21 +55,20 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         auth.userDetailsService(userService).passwordEncoder(passwordEncoder());
     }
 
-
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().ignoringAntMatchers("/**");
-        http.httpBasic().authenticationEntryPoint(restServicesEntryPoint());//Tùy chỉnh lại thông báo 401 thông qua class restEntryPoint
+        http.httpBasic().authenticationEntryPoint(restServicesEntryPoint());
         http.authorizeRequests()
                 .antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 .antMatchers("/image/**",
                         "/api/login",
                         "/api/register").permitAll()
-                .antMatchers("/api/returnTickets/**").permitAll()
-//                .antMatchers("/api/products/**", "/api/categories/**", "/api/files")
-//                .access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
-                .anyRequest().permitAll();
-//                .anyRequest().authenticated();
+                .antMatchers("/api/returnTickets/**").authenticated()
+                .antMatchers("/api/borrowTickets/**").authenticated()
+                .antMatchers("/api/books/**").authenticated()
+                .antMatchers("/api/categories/**").authenticated()
+                ;
 
         http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling().accessDeniedHandler(customAccessDeniedHandler());
