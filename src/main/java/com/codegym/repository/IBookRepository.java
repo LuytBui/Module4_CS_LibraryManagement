@@ -10,4 +10,6 @@ import org.springframework.stereotype.Repository;
 public interface IBookRepository extends PagingAndSortingRepository<Book, Long> {
     Iterable<Book> findAllByCategory_Id(Long id);
     Page<Book> findAllByNameContaining(String name, Pageable pageable);
+    Page<Book> findAllByCategory_Id(Long id, Pageable pageable);
+    Page<Book> findAllByPublisher(String publisher, Pageable pageable);
 }

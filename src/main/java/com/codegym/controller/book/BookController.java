@@ -45,7 +45,6 @@ public class BookController {
     @GetMapping("/page/{pageNumber}")
     public ResponseEntity<Page<Book>> showPage(@RequestParam(name = "q") Optional<String> q, @PathVariable int pageNumber){
         Pageable pageable = PageRequest.of(pageNumber, PAGE_SIZE);
-        int currentPageNumber = pageable.getPageNumber();
         Page<Book> books = bookService.findAll(pageable);
         if (q.isPresent()) {
             books = bookService.findAllByNameContaining(q.get(), pageable);
@@ -116,5 +115,14 @@ public class BookController {
         }
         bookService.deleteById(id);
         return new ResponseEntity<>(bookOptional.get(), HttpStatus.OK);
+    }
+    @GetMapping("/{publisher}/page/{pageNumber}")
+    public ResponseEntity<Page<Book>> showPageByPublisher(@RequestParam(name = "q") Optional<String> q, @PathVariable Optional<String> publisher ,@PathVariable int pageNumber){
+        Pageable pageable = PageRequest.of(pageNumber, PAGE_SIZE);
+        Page<Book> books = bookService.findAllByPublisher(publisher.get(), pageable);
+        if (q.isPresent()) {
+            books = bookService.findAllByNameContaining(q.get(), pageable);
+        }
+        return new ResponseEntity<>(books, HttpStatus.OK);
     }
 }

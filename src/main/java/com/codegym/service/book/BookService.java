@@ -41,4 +41,9 @@ public class BookService implements IBookService{
     public Page<Book> findAllByNameContaining(String name, Pageable pageable) {
         return bookRepository.findAllByNameContaining(name, pageable);
     }
+
+    @Override
+    public Page<Book> findAllByPublisher(String publisher, Pageable pageable) {
+        return bookRepository.findAllByPublisher(publisher, pageable);
+    }
 }

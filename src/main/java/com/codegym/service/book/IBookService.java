@@ -8,4 +8,5 @@ import org.springframework.data.domain.Pageable;
 public interface IBookService extends IGeneralService<Book> {
     Page<Book> findAll(Pageable pageable);
     Page<Book> findAllByNameContaining(String name, Pageable pageable);
+    Page<Book> findAllByPublisher(String publisher, Pageable pageable);
 }
