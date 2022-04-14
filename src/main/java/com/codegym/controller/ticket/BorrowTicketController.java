@@ -67,6 +67,7 @@ public class BorrowTicketController {
         BorrowTicket borrowTicket = borrowTicketOptional.get();
         borrowTicket.setReviewed(true);
         borrowTicket.setAccepted(true);
+        borrowTicket.setReturned(false);
         borrowTicket.setBorrowDate(getCurrentTime());
         return new ResponseEntity<>(borrowTicket, HttpStatus.OK);
     }
