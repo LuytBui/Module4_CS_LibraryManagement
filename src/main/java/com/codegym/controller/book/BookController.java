@@ -18,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -33,14 +34,10 @@ public class BookController {
     private String uploadPath;
 
     @GetMapping
-    public ResponseEntity<Page<Book>> findAll(@RequestParam(name = "q") Optional<String> q, @PageableDefault(value = 12) Pageable pageable) {
-        Page<Book> books = bookService.findAll(pageable);
-        if (q.isPresent()) {
-            books = bookService.findAllByNameContaining(q.get(), pageable);
-        }
-        return new ResponseEntity<>(books, HttpStatus.OK);
+    public ResponseEntity<List<String>> findAllPublisher() {
+        List<String> publisher = bookService.findAllPublisher();
+        return new ResponseEntity<>(publisher, HttpStatus.OK);
     }
-
 
     @GetMapping("/page/{pageNumber}")
     public ResponseEntity<Page<Book>> showPage(@RequestParam(name = "q") Optional<String> q, @PathVariable int pageNumber){
