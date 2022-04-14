@@ -6,10 +6,12 @@ import com.codegym.service.book.IBookService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.parameters.P;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -22,6 +24,8 @@ import java.util.Optional;
 @CrossOrigin("*")
 @RequestMapping("/api/books")
 public class BookController {
+    public final int PAGE_SIZE = 12;
+
     @Autowired
     private IBookService bookService;
 
@@ -29,7 +33,18 @@ public class BookController {
     private String uploadPath;
 
     @GetMapping
-    public ResponseEntity<Page<Book>> findAll(@RequestParam(name = "q") Optional<String> q, @PageableDefault(value = 10) Pageable pageable) {
+    public ResponseEntity<Page<Book>> findAll(@RequestParam(name = "q") Optional<String> q, @PageableDefault(value = 12) Pageable pageable) {
+        Page<Book> books = bookService.findAll(pageable);
+        if (q.isPresent()) {
+            books = bookService.findAllByNameContaining(q.get(), pageable);
+        }
+        return new ResponseEntity<>(books, HttpStatus.OK);
+    }
+
+    @GetMapping("/page/{pageNumber}")
+    public ResponseEntity<Page<Book>> showPage(@RequestParam(name = "q") Optional<String> q, @PathVariable int pageNumber){
+        Pageable pageable = PageRequest.of(pageNumber, PAGE_SIZE);
+        int currentPageNumber = pageable.getPageNumber();
         Page<Book> books = bookService.findAll(pageable);
         if (q.isPresent()) {
             books = bookService.findAllByNameContaining(q.get(), pageable);
