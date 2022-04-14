@@ -41,6 +41,7 @@ public class BookController {
         return new ResponseEntity<>(books, HttpStatus.OK);
     }
 
+
     @GetMapping("/page/{pageNumber}")
     public ResponseEntity<Page<Book>> showPage(@RequestParam(name = "q") Optional<String> q, @PathVariable int pageNumber){
         Pageable pageable = PageRequest.of(pageNumber, PAGE_SIZE);
