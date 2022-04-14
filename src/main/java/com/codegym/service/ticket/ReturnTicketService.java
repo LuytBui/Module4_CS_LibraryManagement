@@ -14,8 +14,6 @@ public class ReturnTicketService implements IReturnTicketService {
     @Autowired
     private IReturnTicketRepository returnTicketRepository;
 
-    @Autowired
-    private IBorrowTicketRepository borrowTicketRepository;
 
     @Override
     public Iterable<ReturnTicket> findAll() {
@@ -30,10 +28,6 @@ public class ReturnTicketService implements IReturnTicketService {
     @Override
     public void deleteById(Long id) {
         returnTicketRepository.deleteById(id);
-    }
-
-    public Optional<BorrowTicket> findByIdBorrowTicket(Long id) {
-        return borrowTicketRepository.findById(id);
     }
 
     @Override

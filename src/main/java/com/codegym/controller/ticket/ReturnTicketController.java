@@ -3,10 +3,8 @@ package com.codegym.controller.ticket;
 import com.codegym.model.auth.ErrorMessage;
 import com.codegym.model.ticket.BorrowTicket;
 import com.codegym.model.ticket.ReturnTicket;
-import com.codegym.repository.IBorrowTicketRepository;
 import com.codegym.service.ticket.IBorrowTicketService;
 import com.codegym.service.ticket.IReturnTicketService;
-import org.aspectj.apache.bcel.generic.RET;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -44,17 +42,15 @@ public class ReturnTicketController {
     public ResponseEntity<?> saveReturnTicket(@RequestBody ReturnTicket returnTicket) {
         Long borrowTicketId = returnTicket.getBorrowTicket().getId();
         Optional<BorrowTicket> borrowTicket = borrowTicketService.findById(borrowTicketId);
-        if (!borrowTicket.isPresent()){
+        if (!borrowTicket.isPresent()) {
             ErrorMessage errorMessage = new ErrorMessage("Thẻ mượn không tồn tại");
             return new ResponseEntity<>(errorMessage, HttpStatus.BAD_REQUEST);
         }
-
         Optional<ReturnTicket> findReturnTicket = returnTicketService.findByBorrowTicketId(borrowTicketId);
-        if (findReturnTicket.isPresent()){
+        if (findReturnTicket.isPresent()) {
             ErrorMessage errorMessage = new ErrorMessage("Đã tạo thẻ trả");
             return new ResponseEntity<>(errorMessage, HttpStatus.BAD_REQUEST);
         }
-
         return new ResponseEntity<>(returnTicketService.save(returnTicket), HttpStatus.CREATED);
     }
 
@@ -76,7 +72,7 @@ public class ReturnTicketController {
         }
         returnTicketService.deleteById(id);
         return new ResponseEntity<>(optionalReturnTicket.get(), HttpStatus.OK);
-    };
+    }
 
 }
 
