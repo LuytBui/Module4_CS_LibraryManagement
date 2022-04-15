@@ -35,6 +35,7 @@ public class ReturnTicket {
     public static final String OVERDUE = "Quá hạn";
     public static final String RETURNED = "Đã trả";
     public static List<String> statuses = new ArrayList<>();
+
     static {
         statuses.add(OVERDUE);
         statuses.add(RETURNED);

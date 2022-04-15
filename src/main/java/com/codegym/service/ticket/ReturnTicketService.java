@@ -7,6 +7,8 @@ import com.codegym.repository.IReturnTicketRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityNotFoundException;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -39,5 +41,10 @@ public class ReturnTicketService implements IReturnTicketService {
     @Override
     public Optional<ReturnTicket> findByBorrowTicketId(Long borrowTicketId) {
         return returnTicketRepository.findByBorrowTicket_Id(borrowTicketId);
+    }
+
+    @Override
+    public List<ReturnTicket> findAllReturnTicketNotReviewed() {
+        return returnTicketRepository.findAllReturnTicketsNotReviewed();
     }
 }

@@ -70,6 +70,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/api/books/**").authenticated()
                 .antMatchers("/api/categories/**").authenticated()
                 .antMatchers("/api/changePassword").authenticated()
+                .antMatchers("/api/returnTickets/notReviewed").authenticated()
                 ;
 
         http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)

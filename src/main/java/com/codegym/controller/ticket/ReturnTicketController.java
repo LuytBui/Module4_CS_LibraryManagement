@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Optional;
 
 
@@ -132,6 +133,10 @@ public class ReturnTicketController {
         return String.valueOf(now);
     }
 
-
+    @GetMapping("/notReviewed")
+    public ResponseEntity<List<ReturnTicket>> findAllReturnTicketNotReviewed() {
+        List<ReturnTicket> returnTickets = returnTicketService.findAllReturnTicketNotReviewed();
+        return new ResponseEntity<>(returnTickets, HttpStatus.OK);
+    }
 }
 
