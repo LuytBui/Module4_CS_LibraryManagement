@@ -1,38 +1,79 @@
 package com.codegym.controller.user;
 
+import com.codegym.model.auth.ErrorMessage;
+import com.codegym.model.book.Book;
+import com.codegym.model.user.Role;
 import com.codegym.model.user.User;
+import com.codegym.model.user.UserInfoForm;
 import com.codegym.service.user.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
+import java.security.Principal;
 import java.util.Optional;
 
 @RestController
 @CrossOrigin("*")
-@RequestMapping("/api/manage_user")
+@RequestMapping("/api/users")
 public class UserController {
     @Autowired
     IUserService userService;
 
-    @PostMapping("/{id}/deactive")
-    public ResponseEntity<?> deactiveUser(@PathVariable Long id) {
+    @Value("${file-upload}")
+    private String uploadPath;
+
+    @GetMapping("/{id}")
+    public ResponseEntity<User> findById(@PathVariable Long id) {
         Optional<User> user = userService.findById(id);
-        if (!user.isPresent()) {
+        if (!user.isPresent())
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-        user.get().setActive(false);
-        return new ResponseEntity<>(userService.save(user.get()), HttpStatus.OK);
+        return new ResponseEntity<>(user.get(), HttpStatus.OK);
     }
 
-    @PostMapping("/{id}/active")
-    public ResponseEntity<?> activeUser(@PathVariable Long id) {
-        Optional<User> user = userService.findById(id);
-        if (!user.isPresent()) {
+    @PostMapping("/{id}")
+    public ResponseEntity<?> updateUser(@PathVariable Long id, @ModelAttribute UserInfoForm userInfoForm) {
+        Optional<User> updateUserOptional = userService.findById(id);
+        if (!updateUserOptional.isPresent())
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
+        User updateUser = updateUserOptional.get();
+        Principal principal = SecurityContextHolder.getContext().getAuthentication();
+        User logginUser = userService.findByUsername(principal.getName()).get();
+        boolean currentUserIsAdmin = logginUser.getId().equals(updateUser.getId());
+        boolean currentUserIsOwner = principal.getName().equals(userInfoForm.getUsername());
+        boolean authorized = currentUserIsAdmin || currentUserIsOwner;
+
+        if (!authorized){
+            ErrorMessage errorMessage = new ErrorMessage("Không có quyền sửa thông tin người dùng");
+            return new ResponseEntity<>(errorMessage, HttpStatus.UNAUTHORIZED);
         }
-        user.get().setActive(true);
-        return new ResponseEntity<>(userService.save(user.get()), HttpStatus.OK);
+
+        updateUser.setEmail(userInfoForm.getEmail());
+        updateUser.setPhone(userInfoForm.getPhone());
+        updateUser.setAddress(userInfoForm.getAddress());
+        updateUser.setOccupation(userInfoForm.getOccupation());
+
+        MultipartFile img = userInfoForm.getImage();
+        if (img.getSize() != 0) {
+            String fileName = img.getOriginalFilename();
+            long currentTime = System.currentTimeMillis();
+            fileName = currentTime + "_" + fileName;
+            try {
+                FileCopyUtils.copy(img.getBytes(), new File(uploadPath + fileName));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            updateUser.setImage(fileName);
+        }
+
+        return new ResponseEntity<>(userService.save(updateUser), HttpStatus.OK);
     }
 }

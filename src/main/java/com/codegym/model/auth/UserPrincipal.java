@@ -22,7 +22,7 @@ public class UserPrincipal implements UserDetails {
 
     public static UserPrincipal build(User user) {
         Role userRole = user.getRole();
-        GrantedAuthority authority =new SimpleGrantedAuthority(userRole.getName());
+        GrantedAuthority authority = new SimpleGrantedAuthority(userRole.getName());
         return new UserPrincipal(
                 user.getId(),
                 user.getUsername(),
@@ -51,21 +51,21 @@ public class UserPrincipal implements UserDetails {
 
     @Override
     public boolean isAccountNonExpired() {
-        return isActive;
+        return true;
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return isActive;
+        return true;
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return isActive;
+        return true;
     }
 
     @Override
     public boolean isEnabled() {
-        return isActive;
+        return true;
     }
 }
