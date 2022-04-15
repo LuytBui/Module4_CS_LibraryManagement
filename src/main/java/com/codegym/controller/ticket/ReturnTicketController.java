@@ -1,6 +1,8 @@
 package com.codegym.controller.ticket;
 
+import com.codegym.model.ticket.BorrowTicket;
 import com.codegym.model.ticket.ReturnTicket;
+import com.codegym.service.ticket.IBorrowTicketService;
 import com.codegym.service.ticket.IReturnTicketService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,6 +19,9 @@ public class ReturnTicketController {
     @Autowired
     private IReturnTicketService returnTicketService;
 
+    @Autowired
+    private IBorrowTicketService borrowTicketService;
+
     @GetMapping
     public ResponseEntity<Iterable<ReturnTicket>> findAll() {
         Iterable<ReturnTicket> returnTickets = returnTicketService.findAll();
@@ -32,9 +37,17 @@ public class ReturnTicketController {
         return new ResponseEntity<>(returnTicket.get(), HttpStatus.OK);
     }
 
-    @PostMapping
-    public ResponseEntity<ReturnTicket> saveReturnTicket(@RequestBody ReturnTicket returnTicket) {
-        returnTicket = new ReturnTicket(returnTicket.getId(), returnTicket.getBorrowTicket(), returnTicket.getReturnDate(), returnTicket.getStatus(), returnTicket.isAccept());
+    @PostMapping("/save-return-for-borrow/{borrowTicketId}")
+    public ResponseEntity<ReturnTicket> saveReturnTicket(@PathVariable Long borrowTicketId) {
+        Optional<BorrowTicket> borrowTicketOptional = borrowTicketService.findById(borrowTicketId);
+        if (!borrowTicketOptional.isPresent())
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        BorrowTicket borrowTicket = borrowTicketOptional.get();
+        ReturnTicket returnTicket = new ReturnTicket(borrowTicket);
+
+        borrowTicket.setHasReturnTicket(true);
+        borrowTicketService.save(borrowTicket);
+
         return new ResponseEntity<>(returnTicketService.save(returnTicket), HttpStatus.CREATED);
     }
 

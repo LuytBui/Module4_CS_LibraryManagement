@@ -35,4 +35,7 @@ public class BorrowTicket {
 
     @Column(columnDefinition = "boolean default false")
     private boolean isReturned;
+
+    @Column(columnDefinition = "boolean default false")
+    private boolean hasReturnTicket;
 }
