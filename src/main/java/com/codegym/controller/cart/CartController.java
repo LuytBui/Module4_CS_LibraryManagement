@@ -36,7 +36,7 @@ public class CartController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<List<Book>> findAllBookInCart(@PathVariable Long id) {
+    public ResponseEntity<?> findAllBookInCart(@PathVariable Long id) {
         Optional<Cart> cartOptional = cartService.findById(id);
         if (!cartOptional.isPresent()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -53,10 +53,25 @@ public class CartController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
+        // lay ra user dang dang nhap tu DB
+        // lay ra cart ung voi user nay
+        // so sanh 2 cart id
+        // neu khac nhau thi return bad request
+
         cartDetailService.addBookToCart(cartOptional.get(), bookOptional.get());
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
+    @DeleteMapping("/{cartId}/remove-book/{bookId}")
+    public ResponseEntity<?> removeBook(@PathVariable Long cartId, @PathVariable Long bookId) {
+        Optional<Cart> cartOptional = cartService.findById(cartId);
+        Optional<Book> bookOptional = bookService.findById(bookId);
+        if (!cartOptional.isPresent() || !bookOptional.isPresent()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        cartDetailService.removeBookFromCart(cartOptional.get(),bookOptional.get());
+        return findAllBookInCart(cartId);
+    }
     @DeleteMapping("/{id}")
     public ResponseEntity<Cart> deleteCart(@PathVariable Long id) {
         Optional<Cart> cartOptional = cartService.findById(id);
@@ -65,6 +80,12 @@ public class CartController {
         }
         cartService.deleteById(id);
         return new ResponseEntity<>(cartOptional.get(), HttpStatus.OK);
+    }
+
+    @GetMapping("/get-cart-of-user/{userId}")
+    public ResponseEntity<?> getCartOfUser(@PathVariable Long userId){
+        Cart cart = cartService.findCartByUser_Id(userId);
+        return new ResponseEntity<>(cart, HttpStatus.OK);
     }
 
 }

@@ -13,4 +13,5 @@ public interface ICartDetailService extends IGeneralService<CartDetail> {
     Page<CartDetail> findAll(Pageable pageable);
     List<Book> findAllBookInCart(Cart cart);
     void addBookToCart(Cart cart, Book book);
+    void removeBookFromCart(Cart cart,Book book);
 }

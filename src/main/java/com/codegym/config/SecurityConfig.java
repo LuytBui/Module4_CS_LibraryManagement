@@ -68,6 +68,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/api/register").permitAll()
                 .antMatchers("/api/returnTickets/**").authenticated()
                 .antMatchers("/api/borrowTickets/**").authenticated()
+                .antMatchers("/api/carts/**").authenticated()
 
                 .antMatchers(HttpMethod.POST, "/api/books/**").hasAnyRole(Role.ROLE_ADMIN, Role.ROLE_LIBRARIAN)
                 .antMatchers(HttpMethod.PUT, "/api/books/**").hasAnyRole(Role.ROLE_ADMIN, Role.ROLE_LIBRARIAN)
@@ -78,6 +79,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.PUT, "/api/categories/**").hasAnyRole(Role.ROLE_ADMIN, Role.ROLE_LIBRARIAN)
                 .antMatchers(HttpMethod.DELETE, "/api/categories/**").hasAnyRole(Role.ROLE_ADMIN, Role.ROLE_LIBRARIAN)
                 .antMatchers(HttpMethod.GET, "/api/categories/**").permitAll()
+
+
 
                 .antMatchers("/api/changePassword").authenticated()
                 ;

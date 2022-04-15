@@ -22,4 +22,7 @@ public class Cart {
     @JoinColumn(name = "customer_id")
     private User customer;
 
+    public Cart(User customer) {
+        this.customer = customer;
+    }
 }

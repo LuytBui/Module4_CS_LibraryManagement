@@ -3,6 +3,7 @@ package com.codegym.service.cart;
 import com.codegym.model.cart.Cart;
 import com.codegym.model.user.User;
 import com.codegym.repository.ICartRepository;
+import com.codegym.service.user.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -13,6 +14,9 @@ import java.util.Optional;
 public class CartService implements ICartService {
     @Autowired
     private ICartRepository cartRepository;
+
+    @Autowired
+    private IUserService userService;
 
     @Override
     public Iterable<Cart> findAll() {
@@ -41,11 +45,23 @@ public class CartService implements ICartService {
 
     @Override
     public Cart findCartByUser_Id(Long userId) {
+        Optional<User> findUser = userService.findById(userId);
+        if (!findUser.isPresent())
+            return null;
+
+        Optional<Cart> findCart = cartRepository.findByCustomer_Id(userId);
+
+        if (!findCart.isPresent()){
+            Cart cart = new Cart (findUser.get());
+            save(cart);
+            return cart;
+        }
+
+        return findCart.get();
         /*
         neu trong DB da co Cart ung voi user nay thi tra ve
         neu chua co thi tao moi, luu vao DB, tra ve
          */
-        return null;
     }
 
 }
