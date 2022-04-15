@@ -2,6 +2,7 @@ package com.codegym.config;
 
 import com.codegym.config.custom.CustomAccessDeniedHandler;
 import com.codegym.config.custom.RestAuthenticationEntryPoint;
+import com.codegym.model.user.Role;
 import com.codegym.service.user.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -65,12 +66,21 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/image/**",
                         "/api/login",
                         "/api/register").permitAll()
-                .antMatchers("/api/returnTickets/**").permitAll()
-                .antMatchers("/api/carts/**").permitAll()
-                .antMatchers("/api/cartDetails/**").permitAll()
-//                .antMatchers("/api/products/**", "/api/categories/**", "/api/files")
-//                .access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
-                .anyRequest().authenticated();
+                .antMatchers("/api/returnTickets/**").authenticated()
+                .antMatchers("/api/borrowTickets/**").authenticated()
+
+                .antMatchers(HttpMethod.POST, "/api/books/**").hasAnyRole(Role.ROLE_ADMIN, Role.ROLE_LIBRARIAN)
+                .antMatchers(HttpMethod.PUT, "/api/books/**").hasAnyRole(Role.ROLE_ADMIN, Role.ROLE_LIBRARIAN)
+                .antMatchers(HttpMethod.DELETE, "/api/books/**").hasAnyRole(Role.ROLE_ADMIN, Role.ROLE_LIBRARIAN)
+                .antMatchers(HttpMethod.GET, "/api/books/**").permitAll()
+
+                .antMatchers(HttpMethod.POST, "/api/categories/**").hasAnyRole(Role.ROLE_ADMIN, Role.ROLE_LIBRARIAN)
+                .antMatchers(HttpMethod.PUT, "/api/categories/**").hasAnyRole(Role.ROLE_ADMIN, Role.ROLE_LIBRARIAN)
+                .antMatchers(HttpMethod.DELETE, "/api/categories/**").hasAnyRole(Role.ROLE_ADMIN, Role.ROLE_LIBRARIAN)
+                .antMatchers(HttpMethod.GET, "/api/categories/**").permitAll()
+
+                .antMatchers("/api/changePassword").authenticated()
+                ;
 
         http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling().accessDeniedHandler(customAccessDeniedHandler());
