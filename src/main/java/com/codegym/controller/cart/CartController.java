@@ -1,7 +1,10 @@
 package com.codegym.controller.cart;
 
+import com.codegym.model.book.Book;
 import com.codegym.model.cart.Cart;
 import com.codegym.model.cart.CartDetail;
+import com.codegym.service.book.IBookService;
+import com.codegym.service.cart.ICartDetailService;
 import com.codegym.service.cart.ICartService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -10,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 
@@ -20,33 +24,37 @@ public class CartController {
     @Autowired
     private ICartService cartService;
 
+    @Autowired
+    private ICartDetailService cartDetailService;
+
+    @Autowired
+    IBookService bookService;
+
     @GetMapping
     public ResponseEntity<Page<Cart>> findAllCart(Pageable pageable) {
         return new ResponseEntity<>(cartService.findAll(pageable), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Cart> findCartById(@PathVariable Long id) {
+    public ResponseEntity<List<Book>> findAllBookInCart(@PathVariable Long id) {
         Optional<Cart> cartOptional = cartService.findById(id);
         if (!cartOptional.isPresent()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity<>(cartOptional.get(), HttpStatus.OK);
+        List<Book> books = cartDetailService.findAllBookInCart(cartOptional.get());
+        return new ResponseEntity<>(books, HttpStatus.OK);
     }
 
-    @PostMapping
-    public ResponseEntity<Cart> save(@RequestBody Cart cart) {
-        return new ResponseEntity<>(cartService.save(cart), HttpStatus.CREATED);
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<Cart> updateCart(@PathVariable Long id, @RequestBody Cart cart) {
-        Optional<Cart> cartOptional = cartService.findById(id);
-        if (!cartOptional.isPresent()) {
+    @PostMapping("/{cartId}/add-book/{bookId}")
+    public ResponseEntity<Cart> save(@PathVariable Long cartId, @PathVariable Long bookId) {
+        Optional<Cart> cartOptional = cartService.findById(cartId);
+        Optional<Book> bookOptional = bookService.findById(bookId);
+        if (!cartOptional.isPresent() || !bookOptional.isPresent()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        cart.setId(id);
-        return new ResponseEntity<>(cartService.save(cart), HttpStatus.OK);
+
+        cartDetailService.addBookToCart(cartOptional.get(), bookOptional.get());
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @DeleteMapping("/{id}")
@@ -58,5 +66,6 @@ public class CartController {
         cartService.deleteById(id);
         return new ResponseEntity<>(cartOptional.get(), HttpStatus.OK);
     }
+
 }
 

@@ -1,6 +1,7 @@
 package com.codegym.service.cart;
 
 import com.codegym.model.cart.Cart;
+import com.codegym.model.user.User;
 import com.codegym.repository.ICartRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;

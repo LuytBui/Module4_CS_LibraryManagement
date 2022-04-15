@@ -1,12 +1,12 @@
 package com.codegym.service.cart;
 
 import com.codegym.model.book.Book;
+import com.codegym.model.cart.Cart;
 import com.codegym.model.cart.CartDetail;
 import com.codegym.repository.ICartDetailRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -43,7 +43,16 @@ public class CartDetailService implements ICartDetailService {
     }
 
     @Override
-    public List<Book> findAllBookCartDetail(Pageable pageable) {
-        return cartDetailRepository.findAllBookCartDetail(pageable);
+    public List<Book> findAllBookInCart(Cart cart) {
+        return cartDetailRepository.findAllBookInCart(cart);
     }
+
+    @Override
+    public void addBookToCart(Cart cart, Book book) {
+        CartDetail cartDetail = new CartDetail();
+        cartDetail.setCart(cart);
+        cartDetail.setBook(book);
+        cartDetailRepository.save(cartDetail);
+    }
+    // removeBookFromCart(Cart cart, Book book)
 }
