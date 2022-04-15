@@ -66,7 +66,8 @@ public class BorrowTicketController {
         }
         BorrowTicket borrowTicket = borrowTicketOptional.get();
         borrowTicket.setReviewed(true);
-        borrowTicket.setAccept(true);
+        borrowTicket.setAccepted(true);
+        borrowTicket.setBorrowDate(getCurrentTime());
         return new ResponseEntity<>(borrowTicket, HttpStatus.OK);
     }
 
@@ -78,7 +79,7 @@ public class BorrowTicketController {
         }
         BorrowTicket borrowTicket = borrowTicketOptional.get();
         borrowTicket.setReviewed(true);
-        borrowTicket.setAccept(false);
+        borrowTicket.setAccepted(false);
         return new ResponseEntity<>(borrowTicket, HttpStatus.OK);
     }
 

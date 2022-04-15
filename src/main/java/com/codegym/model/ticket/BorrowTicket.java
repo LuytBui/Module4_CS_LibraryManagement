@@ -28,8 +28,11 @@ public class BorrowTicket {
     private int duration;
 
     @Column(columnDefinition = "boolean default false")
-    private boolean accept;
+    private boolean isAccepted;
 
     @Column(columnDefinition = "boolean default false")
-    private boolean reviewed;
+    private boolean isReviewed;
+
+    @Column(columnDefinition = "boolean default false")
+    private boolean isReturned;
 }
