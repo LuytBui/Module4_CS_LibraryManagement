@@ -1,6 +1,6 @@
 package com.codegym.model.ticket;
 
-import com.codegym.model.Book;
+import com.codegym.model.book.Book;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

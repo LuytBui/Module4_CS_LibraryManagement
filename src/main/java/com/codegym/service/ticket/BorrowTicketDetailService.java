@@ -1,11 +1,10 @@
 package com.codegym.service.ticket;
 
-import com.codegym.model.Book;
+import com.codegym.model.book.Book;
+import com.codegym.model.ticket.BorrowTicket;
 import com.codegym.model.ticket.BorrowTicketDetail;
 import com.codegym.repository.IBorrowTicketDetailRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -37,7 +36,7 @@ public class BorrowTicketDetailService implements IBorrowTicketDetailService{
     }
 
     @Override
-    public List<Book> findAllBookByBorrowTicket(Long borrowTicketId) {
-        return borrowTicketDetailRepository.findAllBookByBorrowTicket(borrowTicketId);
+    public List<Book> findAllBookByBorrowTicket(BorrowTicket borrowTicket) {
+        return borrowTicketDetailRepository.findAllBookByBorrowTicket(borrowTicket);
     }
 }

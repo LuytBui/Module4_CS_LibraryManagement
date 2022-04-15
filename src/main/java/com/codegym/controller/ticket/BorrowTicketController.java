@@ -1,6 +1,7 @@
 package com.codegym.controller.ticket;
 
-import com.codegym.model.Book;
+import com.codegym.model.auth.ErrorMessage;
+import com.codegym.model.book.Book;
 import com.codegym.model.ticket.BorrowTicket;
 import com.codegym.service.ticket.IBorrowTicketDetailService;
 import com.codegym.service.ticket.IBorrowTicketService;
@@ -20,6 +21,8 @@ import java.util.Optional;
 @CrossOrigin("*")
 @RequestMapping("/api/borrowtickets")
 public class BorrowTicketController {
+    ErrorMessage doesntExist = new ErrorMessage("Thẻ mượn không tồn tại");
+
     @Autowired
     private IBorrowTicketService borrowTicketService;
 
@@ -27,15 +30,20 @@ public class BorrowTicketController {
     private IBorrowTicketDetailService borrowTicketDetailService;
 
     @GetMapping
-    public ResponseEntity<Page<BorrowTicket>> findAllBorrowTickets(Pageable pageable) {
+    public ResponseEntity<Iterable<BorrowTicket>> findAllBorrowTickets() {
+        return new ResponseEntity<>(borrowTicketService.findAll(), HttpStatus.OK);
+    }
+
+    @GetMapping("/customer/{customerId}")
+    public ResponseEntity<Page<BorrowTicket>> findAllBorrowTicketsByCustomerId(@PathVariable Long customerId, Pageable pageable) {
         return new ResponseEntity<>(borrowTicketService.findAll(pageable), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<BorrowTicket> findBorrowedTicketById(@PathVariable Long id) {
+    public ResponseEntity<?> findBorrowedTicketById(@PathVariable Long id) {
         Optional<BorrowTicket> borrowTicketOptional = borrowTicketService.findById(id);
         if (!borrowTicketOptional.isPresent()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(doesntExist, HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(borrowTicketOptional.get(), HttpStatus.OK);
     }
@@ -46,19 +54,19 @@ public class BorrowTicketController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<BorrowTicket> updateBorrowTicket(@PathVariable Long id, @RequestBody BorrowTicket newBorrowTicket) {
+    public ResponseEntity<?> updateBorrowTicket(@PathVariable Long id, @RequestBody BorrowTicket newBorrowTicket) {
         Optional<BorrowTicket> borrowTicketOptional = borrowTicketService.findById(id);
         if (!borrowTicketOptional.isPresent()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(doesntExist, HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(borrowTicketService.save(newBorrowTicket), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<BorrowTicket> deleteBorrowTicket(@PathVariable Long id) {
+    public ResponseEntity<?> deleteBorrowTicket(@PathVariable Long id) {
         Optional<BorrowTicket> borrowTicketOptional = borrowTicketService.findById(id);
         if (!borrowTicketOptional.isPresent()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(doesntExist, HttpStatus.NOT_FOUND);
         }
         borrowTicketService.deleteById(id);
         return new ResponseEntity<>(HttpStatus.OK);
@@ -68,7 +76,7 @@ public class BorrowTicketController {
     public ResponseEntity<?> acceptBorrowTicket(@PathVariable Long id) {
         Optional<BorrowTicket> borrowTicketOptional = borrowTicketService.findById(id);
         if (!borrowTicketOptional.isPresent()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(doesntExist, HttpStatus.NOT_FOUND);
         }
         BorrowTicket borrowTicket = borrowTicketOptional.get();
         borrowTicket.setReviewed(true);
@@ -82,7 +90,7 @@ public class BorrowTicketController {
     public ResponseEntity<?> denyBorrowTicket(@PathVariable Long id) {
         Optional<BorrowTicket> borrowTicketOptional = borrowTicketService.findById(id);
         if (!borrowTicketOptional.isPresent()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(doesntExist, HttpStatus.NOT_FOUND);
         }
         BorrowTicket borrowTicket = borrowTicketOptional.get();
         borrowTicket.setReviewed(true);
@@ -96,15 +104,13 @@ public class BorrowTicketController {
         return String.valueOf(now);
     }
 
-    // get   /id /detail (@PathVar Long id)
-    // => tra ve danh sach cac book trong ticket
     @GetMapping("{id}/details")
-    public ResponseEntity<List<Book>> findBooksInTicket(@PathVariable Long id) {
+    public ResponseEntity<?> findBooksInTicket(@PathVariable Long id) {
         Optional<BorrowTicket> borrowTicketOptional = borrowTicketService.findById(id);
         if (!borrowTicketOptional.isPresent()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(doesntExist, HttpStatus.NOT_FOUND);
         }
-        List<Book> books = borrowTicketDetailService.findAllBookByBorrowTicket(id);
+        List<Book> books = borrowTicketDetailService.findAllBookByBorrowTicket(borrowTicketOptional.get());
         return new ResponseEntity<>(books, HttpStatus.OK);
     }
 }
