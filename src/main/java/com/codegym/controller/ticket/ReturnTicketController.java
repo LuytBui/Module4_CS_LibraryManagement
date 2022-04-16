@@ -37,14 +37,14 @@ public class ReturnTicketController {
         return new ResponseEntity<>(returnTicket.get(), HttpStatus.OK);
     }
 
-    @PostMapping("/save-return-ticket-for-borrow-ticket/{borrowTicketId}")
+
+    @PostMapping("/save-return-for-borrow/{borrowTicketId}")
     public ResponseEntity<ReturnTicket> saveReturnTicket(@PathVariable Long borrowTicketId) {
         Optional<BorrowTicket> borrowTicketOptional = borrowTicketService.findById(borrowTicketId);
         if (!borrowTicketOptional.isPresent())
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         BorrowTicket borrowTicket = borrowTicketOptional.get();
-        ReturnTicket returnTicket = new ReturnTicket();
-        returnTicket.setBorrowTicket(borrowTicket);
+        ReturnTicket returnTicket = new ReturnTicket(borrowTicket);
 
         borrowTicket.setHasReturnTicket(true);
         borrowTicketService.save(borrowTicket);
