@@ -122,4 +122,8 @@ public class BookController {
         }
         return new ResponseEntity<>(books, HttpStatus.OK);
     }
+    @GetMapping("status")
+    public ResponseEntity<List<String>> findAllStatus(){
+        return new ResponseEntity<>(BookForm.statuses, HttpStatus.OK);
+    }
 }
