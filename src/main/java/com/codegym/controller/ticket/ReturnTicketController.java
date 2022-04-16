@@ -1,9 +1,7 @@
 package com.codegym.controller.ticket;
 
 import com.codegym.model.auth.ErrorMessage;
-import com.codegym.model.book.Book;
 import com.codegym.model.ticket.BorrowTicket;
-import com.codegym.model.ticket.BorrowTicketDetail;
 import com.codegym.model.ticket.ReturnTicket;
 import com.codegym.service.ticket.IBorrowTicketService;
 import com.codegym.service.ticket.IReturnTicketService;

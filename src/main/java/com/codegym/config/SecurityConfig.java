@@ -66,12 +66,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/image/**",
                         "/api/login",
                         "/api/register").permitAll()
-<<<<<<< HEAD
+
                 .antMatchers("/api/returnTickets/**").permitAll()
                 .antMatchers("/api/borrowTickets/**").permitAll()
                 .antMatchers("/api/books/**").authenticated()
                 .antMatchers("/api/categories/**").authenticated()
-=======
+
                 .antMatchers("/api/returnTickets/**").authenticated()
                 .antMatchers("/api/borrowTickets/**").authenticated()
 
@@ -85,7 +85,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.DELETE, "/api/categories/**").hasAnyRole(Role.ROLE_ADMIN, Role.ROLE_LIBRARIAN)
                 .antMatchers(HttpMethod.GET, "/api/categories/**").permitAll()
 
->>>>>>> dev
+
                 .antMatchers("/api/changePassword").authenticated()
                 .antMatchers("/api/returnTickets/notReviewed").authenticated()
                 ;
