@@ -1,6 +1,7 @@
 package com.codegym.service.ticket;
 
 import com.codegym.model.ticket.BorrowTicket;
+import com.codegym.model.user.User;
 import com.codegym.repository.IBorrowTicketRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -37,5 +38,10 @@ public class BorrowTicketService implements IBorrowTicketService{
     @Override
     public Page<BorrowTicket> findAll(Pageable pageable) {
         return borrowTicketRepository.findAll(pageable);
+    }
+
+    @Override
+    public Iterable<BorrowTicket> findBorrowTicketByCustomer(User customer) {
+        return borrowTicketRepository.findBorrowTicketByCustomer(customer);
     }
 }
