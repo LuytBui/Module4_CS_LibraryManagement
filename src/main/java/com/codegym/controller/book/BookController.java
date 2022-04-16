@@ -123,21 +123,8 @@ public class BookController {
         }
         return new ResponseEntity<>(books, HttpStatus.OK);
     }
-
-    @PostMapping("/{id}/borrow")
-    public ResponseEntity<?> borrowBook(@PathVariable Long id) {
-        Optional<Book> bookOptional = bookService.findById(id);
-        if (!bookOptional.isPresent()) {
-            ErrorMessage errorMessage = new ErrorMessage("Không tồn tại sách này");
-            return new ResponseEntity<>(errorMessage, HttpStatus.NOT_FOUND);
-        }
-        Book book = bookOptional.get();
-        if (book.getQuantity() <= 0) {
-            String message = "Sách " + book.getName() + " đã hết rồi";
-            ErrorMessage errorMessage = new ErrorMessage(message);
-            return new ResponseEntity<>(errorMessage, HttpStatus.BAD_REQUEST);
-        }
-        book.setQuantity(book.getQuantity() - 1);
-        return new ResponseEntity<>(bookService.save(book), HttpStatus.OK);
+    @GetMapping("status")
+    public ResponseEntity<List<String>> findAllStatus(){
+        return new ResponseEntity<>(BookForm.statuses, HttpStatus.OK);
     }
 }
