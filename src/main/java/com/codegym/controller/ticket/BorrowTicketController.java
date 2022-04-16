@@ -93,13 +93,19 @@ public class BorrowTicketController {
         BorrowTicket borrowTicket = borrowTicketOptional.get();
         List<Book> books = borrowTicketDetailService.findAllBookByBorrowTicket(borrowTicket);
 
+        boolean outOfStock = false;
+        String message = "";
         for (Book book : books) {
             if (book.getQuantity() <= 0) {
-                String message = "Sách " + book.getName() + " đã hết rồi";
-                ErrorMessage errorMessage = new ErrorMessage(message);
-                return new ResponseEntity<>(errorMessage, HttpStatus.BAD_REQUEST);
+                outOfStock = true;
+                message += "Sách " + book.getName() + " đã hết, ";
             }
         }
+        if (outOfStock){
+            ErrorMessage errorMessage = new ErrorMessage(message);
+            return new ResponseEntity<>(errorMessage, HttpStatus.BAD_REQUEST);
+        }
+
 
         for (Book book: books) {
             book.setQuantity(book.getQuantity() - 1);
