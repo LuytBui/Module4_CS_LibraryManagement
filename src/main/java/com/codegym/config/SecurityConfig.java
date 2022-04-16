@@ -69,20 +69,22 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/api/returnTickets/**").authenticated()
                 .antMatchers("/api/borrowTickets/**").authenticated()
 
-                .antMatchers(HttpMethod.POST, "/api/books/**").hasAnyRole(Role.ROLE_ADMIN, Role.ROLE_LIBRARIAN)
-                .antMatchers(HttpMethod.PUT, "/api/books/**").hasAnyRole(Role.ROLE_ADMIN, Role.ROLE_LIBRARIAN)
-                .antMatchers(HttpMethod.DELETE, "/api/books/**").hasAnyRole(Role.ROLE_ADMIN, Role.ROLE_LIBRARIAN)
+                .antMatchers(HttpMethod.POST, "/api/books/**").hasAnyAuthority(Role.ROLE_ADMIN, Role.ROLE_LIBRARIAN)
+                .antMatchers(HttpMethod.PUT, "/api/books/**").hasAnyAuthority(Role.ROLE_ADMIN, Role.ROLE_LIBRARIAN)
+                .antMatchers(HttpMethod.DELETE, "/api/books/**").hasAnyAuthority(Role.ROLE_ADMIN, Role.ROLE_LIBRARIAN)
                 .antMatchers(HttpMethod.GET, "/api/books/**").permitAll()
 
-                .antMatchers(HttpMethod.POST, "/api/categories/**").hasAnyRole(Role.ROLE_ADMIN, Role.ROLE_LIBRARIAN)
-                .antMatchers(HttpMethod.PUT, "/api/categories/**").hasAnyRole(Role.ROLE_ADMIN, Role.ROLE_LIBRARIAN)
-                .antMatchers(HttpMethod.DELETE, "/api/categories/**").hasAnyRole(Role.ROLE_ADMIN, Role.ROLE_LIBRARIAN)
+                .antMatchers(HttpMethod.POST, "/api/categories/**").hasAnyAuthority(Role.ROLE_ADMIN, Role.ROLE_LIBRARIAN)
+                .antMatchers(HttpMethod.PUT, "/api/categories/**").hasAnyAuthority(Role.ROLE_ADMIN, Role.ROLE_LIBRARIAN)
+                .antMatchers(HttpMethod.DELETE, "/api/categories/**").hasAnyAuthority(Role.ROLE_ADMIN, Role.ROLE_LIBRARIAN)
                 .antMatchers(HttpMethod.GET, "/api/categories/**").permitAll()
+
 
                 .antMatchers(HttpMethod.POST, "/api/manage_user/**").hasAuthority(Role.ROLE_ADMIN)
 
+
                 .antMatchers("/api/changePassword").authenticated()
-                ;
+        ;
 
         http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling().accessDeniedHandler(customAccessDeniedHandler());
