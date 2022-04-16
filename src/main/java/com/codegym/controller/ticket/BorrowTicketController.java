@@ -4,6 +4,7 @@ import com.codegym.model.auth.ErrorMessage;
 import com.codegym.model.book.Book;
 import com.codegym.model.ticket.BorrowTicket;
 import com.codegym.model.user.User;
+import com.codegym.service.book.IBookService;
 import com.codegym.service.ticket.IBorrowTicketDetailService;
 import com.codegym.service.ticket.IBorrowTicketService;
 import com.codegym.service.user.IUserService;
@@ -31,6 +32,9 @@ public class BorrowTicketController {
 
     @Autowired
     private IUserService userService;
+
+    @Autowired
+    private IBookService bookService;
 
     @GetMapping
     public ResponseEntity<Iterable<BorrowTicket>> findAllBorrowTickets() {
@@ -85,12 +89,28 @@ public class BorrowTicketController {
         if (!borrowTicketOptional.isPresent()) {
             return new ResponseEntity<>(doesntExist, HttpStatus.NOT_FOUND);
         }
+
         BorrowTicket borrowTicket = borrowTicketOptional.get();
+        List<Book> books = borrowTicketDetailService.findAllBookByBorrowTicket(borrowTicket);
+
+        for (Book book : books) {
+            if (book.getQuantity() <= 0) {
+                String message = "Sách " + book.getName() + " đã hết rồi";
+                ErrorMessage errorMessage = new ErrorMessage(message);
+                return new ResponseEntity<>(errorMessage, HttpStatus.BAD_REQUEST);
+            }
+        }
+
+        for (Book book: books) {
+            book.setQuantity(book.getQuantity() - 1);
+            bookService.save(book);
+        }
+
         borrowTicket.setReviewed(true);
         borrowTicket.setAccepted(true);
         borrowTicket.setReturned(false);
         borrowTicket.setBorrowDate(getCurrentTime());
-        return new ResponseEntity<>(borrowTicket, HttpStatus.OK);
+        return new ResponseEntity<>(borrowTicketService.save(borrowTicket), HttpStatus.OK);
     }
 
     @PostMapping("/{id}/deny")
@@ -102,7 +122,7 @@ public class BorrowTicketController {
         BorrowTicket borrowTicket = borrowTicketOptional.get();
         borrowTicket.setReviewed(true);
         borrowTicket.setAccepted(false);
-        return new ResponseEntity<>(borrowTicket, HttpStatus.OK);
+        return new ResponseEntity<>(borrowTicketService.save(borrowTicket), HttpStatus.OK);
     }
 
     public String getCurrentTime() {
@@ -111,7 +131,7 @@ public class BorrowTicketController {
         return String.valueOf(now);
     }
 
-    @GetMapping("{id}/details")
+    @GetMapping("/{id}/books")
     public ResponseEntity<?> findBooksInTicket(@PathVariable Long id) {
         Optional<BorrowTicket> borrowTicketOptional = borrowTicketService.findById(id);
         if (!borrowTicketOptional.isPresent()) {
@@ -119,5 +139,14 @@ public class BorrowTicketController {
         }
         List<Book> books = borrowTicketDetailService.findAllBookByBorrowTicket(borrowTicketOptional.get());
         return new ResponseEntity<>(books, HttpStatus.OK);
+    }
+
+    @GetMapping("/{id}/details")
+    public ResponseEntity<?> showBorrowTicketDetails(@PathVariable Long id) {
+        Optional<BorrowTicket> borrowTicketOptional = borrowTicketService.findById(id);
+        if (!borrowTicketOptional.isPresent()) {
+            return new ResponseEntity<>(doesntExist, HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(borrowTicketOptional, HttpStatus.OK);
     }
 }

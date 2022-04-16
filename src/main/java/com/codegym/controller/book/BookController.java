@@ -1,5 +1,6 @@
 package com.codegym.controller.book;
 
+import com.codegym.model.auth.ErrorMessage;
 import com.codegym.model.book.Book;
 import com.codegym.model.book.BookForm;
 import com.codegym.service.book.IBookService;
@@ -121,5 +122,22 @@ public class BookController {
             books = bookService.findAllByNameContaining(q.get(), pageable);
         }
         return new ResponseEntity<>(books, HttpStatus.OK);
+    }
+
+    @PostMapping("/{id}/borrow")
+    public ResponseEntity<?> borrowBook(@PathVariable Long id) {
+        Optional<Book> bookOptional = bookService.findById(id);
+        if (!bookOptional.isPresent()) {
+            ErrorMessage errorMessage = new ErrorMessage("Không tồn tại sách này");
+            return new ResponseEntity<>(errorMessage, HttpStatus.NOT_FOUND);
+        }
+        Book book = bookOptional.get();
+        if (book.getQuantity() <= 0) {
+            String message = "Sách " + book.getName() + " đã hết rồi";
+            ErrorMessage errorMessage = new ErrorMessage(message);
+            return new ResponseEntity<>(errorMessage, HttpStatus.BAD_REQUEST);
+        }
+        book.setQuantity(book.getQuantity() - 1);
+        return new ResponseEntity<>(bookService.save(book), HttpStatus.OK);
     }
 }
