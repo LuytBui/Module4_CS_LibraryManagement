@@ -62,7 +62,7 @@ public class UserController {
         updateUser.setOccupation(userInfoForm.getOccupation());
 
         MultipartFile img = userInfoForm.getImage();
-        if (img.getSize() != 0) {
+        if (img != null && img.getSize() != 0) {
             String fileName = img.getOriginalFilename();
             long currentTime = System.currentTimeMillis();
             fileName = currentTime + "_" + fileName;
