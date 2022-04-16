@@ -37,6 +37,7 @@ public class ReturnTicketController {
         return new ResponseEntity<>(returnTicket.get(), HttpStatus.OK);
     }
 
+
     @PostMapping("/save-return-for-borrow/{borrowTicketId}")
     public ResponseEntity<ReturnTicket> saveReturnTicket(@PathVariable Long borrowTicketId) {
         Optional<BorrowTicket> borrowTicketOptional = borrowTicketService.findById(borrowTicketId);
@@ -47,7 +48,6 @@ public class ReturnTicketController {
 
         borrowTicket.setHasReturnTicket(true);
         borrowTicketService.save(borrowTicket);
-
         return new ResponseEntity<>(returnTicketService.save(returnTicket), HttpStatus.CREATED);
     }
 
