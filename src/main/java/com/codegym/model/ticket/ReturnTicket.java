@@ -32,6 +32,10 @@ public class ReturnTicket {
     @Column(columnDefinition = "boolean default false")
     private boolean isReviewed;
 
+    public ReturnTicket(BorrowTicket borrowTicket) {
+        this.borrowTicket = borrowTicket;
+    }
+
     public static final String OVERDUE = "Quá hạn";
     public static final String RETURNED = "Đã trả";
     public static List<String> statuses = new ArrayList<>();

@@ -41,19 +41,17 @@ public class ReturnTicketController {
         return new ResponseEntity<>(returnTicket.get(), HttpStatus.OK);
     }
 
-    @PostMapping
-    public ResponseEntity<?> saveReturnTicket(@RequestBody ReturnTicket returnTicket) {
-        Long borrowTicketId = returnTicket.getBorrowTicket().getId();
-        Optional<BorrowTicket> borrowTicket = borrowTicketService.findById(borrowTicketId);
-        if (!borrowTicket.isPresent()) {
-            ErrorMessage errorMessage = new ErrorMessage("Thẻ mượn không tồn tại");
-            return new ResponseEntity<>(errorMessage, HttpStatus.BAD_REQUEST);
-        }
-        Optional<ReturnTicket> findReturnTicket = returnTicketService.findByBorrowTicketId(borrowTicketId);
-        if (findReturnTicket.isPresent()) {
-            ErrorMessage errorMessage = new ErrorMessage("Đã tạo thẻ trả");
-            return new ResponseEntity<>(errorMessage, HttpStatus.BAD_REQUEST);
-        }
+
+    @PostMapping("/save-return-for-borrow/{borrowTicketId}")
+    public ResponseEntity<ReturnTicket> saveReturnTicket(@PathVariable Long borrowTicketId) {
+        Optional<BorrowTicket> borrowTicketOptional = borrowTicketService.findById(borrowTicketId);
+        if (!borrowTicketOptional.isPresent())
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        BorrowTicket borrowTicket = borrowTicketOptional.get();
+        ReturnTicket returnTicket = new ReturnTicket(borrowTicket);
+
+        borrowTicket.setHasReturnTicket(true);
+        borrowTicketService.save(borrowTicket);
         return new ResponseEntity<>(returnTicketService.save(returnTicket), HttpStatus.CREATED);
     }
 
