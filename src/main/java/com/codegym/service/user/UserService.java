@@ -44,7 +44,9 @@ public class UserService implements IUserService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findByUsername(username).get();
-        return UserPrincipal.build(user);
+        Optional<User> user = userRepository.findByUsername(username);
+        if (!user.isPresent() || !user.get().isActive())
+            throw new UsernameNotFoundException("Tài khoản không tồn tại hoặc đã bị khóa");
+        return UserPrincipal.build(user.get());
     }
 }
