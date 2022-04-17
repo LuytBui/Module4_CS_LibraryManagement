@@ -12,6 +12,10 @@ import java.util.Optional;
 @Repository
 public interface IReturnTicketRepository extends PagingAndSortingRepository<ReturnTicket, Long> {
     Optional<ReturnTicket> findByBorrowTicket_Id(Long borrowTicketId);
+
     @Query(value = "select * from return_tickets where is_reviewed = false ", nativeQuery = true)
-    List<ReturnTicket> findAllReturnTicketsNotReviewed ();
+    List<ReturnTicket> findAllReturnTicketsNotReviewed();
+
+    @Query(value = "select rt from ReturnTicket rt left join rt.borrowTicket left join  rt.borrowTicket.customer where rt.borrowTicket.customer.id = ?1")
+    List<ReturnTicket> findAllByCustomer_Id(Long userId);
 }

@@ -164,7 +164,7 @@ public class BorrowTicketController {
         if (!borrowTicketOptional.isPresent()) {
             return new ResponseEntity<>(doesntExist, HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity<>(borrowTicketOptional, HttpStatus.OK);
+        return new ResponseEntity<>(borrowTicketOptional.get(), HttpStatus.OK);
     }
 
     @PostMapping("/{userId}")
