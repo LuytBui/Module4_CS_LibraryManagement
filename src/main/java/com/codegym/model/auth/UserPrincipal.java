@@ -17,15 +17,17 @@ public class UserPrincipal implements UserDetails {
     private Long id;
     private String username;
     private String password;
+    private boolean isActive;
     private GrantedAuthority role;
 
     public static UserPrincipal build(User user) {
         Role userRole = user.getRole();
-        GrantedAuthority authority =new SimpleGrantedAuthority(userRole.getName());
+        GrantedAuthority authority = new SimpleGrantedAuthority(userRole.getName());
         return new UserPrincipal(
                 user.getId(),
                 user.getUsername(),
                 user.getPassword(),
+                user.isActive(),
                 authority
         );
     }
