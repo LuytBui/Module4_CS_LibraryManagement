@@ -1,13 +1,15 @@
 package com.codegym.controller.user;
 
 import com.codegym.model.auth.ErrorMessage;
-import com.codegym.model.book.Book;
 import com.codegym.model.user.Role;
 import com.codegym.model.user.User;
 import com.codegym.model.user.UserInfoForm;
 import com.codegym.service.user.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -24,6 +26,8 @@ import java.util.Optional;
 @CrossOrigin("*")
 @RequestMapping("/api/users")
 public class UserController {
+
+
     @Autowired
     IUserService userService;
 
@@ -38,6 +42,8 @@ public class UserController {
         return new ResponseEntity<>(user.get(), HttpStatus.OK);
     }
 
+
+
     @PostMapping("/{id}")
     public ResponseEntity<?> updateUser(@PathVariable Long id, @ModelAttribute UserInfoForm userInfoForm) {
         Optional<User> updateUserOptional = userService.findById(id);
@@ -47,8 +53,8 @@ public class UserController {
         User updateUser = updateUserOptional.get();
         Principal principal = SecurityContextHolder.getContext().getAuthentication();
         User logginUser = userService.findByUsername(principal.getName()).get();
-        boolean currentUserIsAdmin = logginUser.getId().equals(updateUser.getId());
-        boolean currentUserIsOwner = principal.getName().equals(userInfoForm.getUsername());
+        boolean currentUserIsAdmin = logginUser.getRole().getName().equals(Role.ROLE_ADMIN);
+        boolean currentUserIsOwner = logginUser.getId().equals(id);
         boolean authorized = currentUserIsAdmin || currentUserIsOwner;
 
         if (!authorized){
