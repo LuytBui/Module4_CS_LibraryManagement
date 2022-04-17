@@ -68,6 +68,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/api/register").permitAll()
                 .antMatchers("/api/returnTickets/**").authenticated()
                 .antMatchers("/api/borrowTickets/**").authenticated()
+                .antMatchers("/api/carts/**").authenticated()
 
                 .antMatchers(HttpMethod.POST, "/api/books/**").hasAnyAuthority(Role.ROLE_ADMIN, Role.ROLE_LIBRARIAN)
                 .antMatchers(HttpMethod.PUT, "/api/books/**").hasAnyAuthority(Role.ROLE_ADMIN, Role.ROLE_LIBRARIAN)
