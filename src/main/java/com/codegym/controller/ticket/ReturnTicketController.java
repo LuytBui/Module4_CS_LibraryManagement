@@ -9,6 +9,9 @@ import com.codegym.service.ticket.IBorrowTicketDetailService;
 import com.codegym.service.ticket.IBorrowTicketService;
 import com.codegym.service.ticket.IReturnTicketService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,6 +26,7 @@ import java.util.Optional;
 @CrossOrigin("*")
 @RequestMapping("/api/returnTickets")
 public class ReturnTicketController {
+    public final int PAGE_SIZE = 4;
     @Autowired
     private IReturnTicketService returnTicketService;
 
@@ -153,11 +157,11 @@ public class ReturnTicketController {
         return String.valueOf(now);
     }
 
-    @GetMapping("/notReviewed")
-    public ResponseEntity<List<ReturnTicket>> findAllReturnTicketNotReviewed() {
-        List<ReturnTicket> returnTickets = returnTicketService.findAllReturnTicketNotReviewed();
+    @GetMapping("/notReviewed/page/{pageNumber}")
+    public ResponseEntity<Page<ReturnTicket>> findAllReturnTicketNotReviewed(@PathVariable int pageNumber) {
+        Pageable pageable = PageRequest.of(pageNumber, PAGE_SIZE);
+        Page<ReturnTicket> returnTickets = returnTicketService.findAllReturnTicketsNotReviewed(pageable);
         return new ResponseEntity<>(returnTickets, HttpStatus.OK);
     }
-
 }
 
