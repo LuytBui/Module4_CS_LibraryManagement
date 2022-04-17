@@ -16,4 +16,6 @@ public interface IBorrowTicketRepository extends PagingAndSortingRepository<Borr
 
     @Query(value = "SELECT * FROM borrow_tickets WHERE is_reviewed = false", nativeQuery = true)
     Page<BorrowTicket> findBorrowTicketNotReviewed(Pageable pageable);
+
+
 }
