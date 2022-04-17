@@ -10,4 +10,6 @@ public interface IBorrowTicketService extends IGeneralService<BorrowTicket> {
     Page<BorrowTicket> findAll(Pageable pageable);
 
     Iterable<BorrowTicket> findBorrowTicketByCustomer(User customer);
+
+    Page<BorrowTicket> findBorrowTicketNotReviewed(Pageable pageable);
 }

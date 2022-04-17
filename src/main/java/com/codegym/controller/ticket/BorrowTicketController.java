@@ -9,6 +9,8 @@ import com.codegym.service.ticket.IBorrowTicketDetailService;
 import com.codegym.service.ticket.IBorrowTicketService;
 import com.codegym.service.user.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -36,9 +38,14 @@ public class BorrowTicketController {
     @Autowired
     private IBookService bookService;
 
+//    @GetMapping
+//    public ResponseEntity<Iterable<BorrowTicket>> findAllBorrowTickets() {
+//        return new ResponseEntity<>(borrowTicketService.findAll(), HttpStatus.OK);
+//    }
+
     @GetMapping
-    public ResponseEntity<Iterable<BorrowTicket>> findAllBorrowTickets() {
-        return new ResponseEntity<>(borrowTicketService.findAll(), HttpStatus.OK);
+    public ResponseEntity<Page<BorrowTicket>> findBorrowTicketNotReviewed() {
+        return new ResponseEntity<>(borrowTicketService.findBorrowTicketNotReviewed(), HttpStatus.OK);
     }
 
     @GetMapping("/customer/{id}")
