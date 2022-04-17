@@ -1,16 +1,21 @@
 package com.codegym.service.ticket;
 
+import com.codegym.model.ticket.BorrowTicket;
 import com.codegym.model.ticket.ReturnTicket;
+import com.codegym.repository.IBorrowTicketRepository;
 import com.codegym.repository.IReturnTicketRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityNotFoundException;
+import java.util.List;
 import java.util.Optional;
 
 @Service
 public class ReturnTicketService implements IReturnTicketService {
     @Autowired
     private IReturnTicketRepository returnTicketRepository;
+
 
     @Override
     public Iterable<ReturnTicket> findAll() {
@@ -27,10 +32,19 @@ public class ReturnTicketService implements IReturnTicketService {
         returnTicketRepository.deleteById(id);
     }
 
-
     @Override
     public Optional<ReturnTicket> findById(Long id) {
         return returnTicketRepository.findById(id);
     }
 
+
+    @Override
+    public Optional<ReturnTicket> findByBorrowTicketId(Long borrowTicketId) {
+        return returnTicketRepository.findByBorrowTicket_Id(borrowTicketId);
+    }
+
+    @Override
+    public List<ReturnTicket> findAllReturnTicketNotReviewed() {
+        return returnTicketRepository.findAllReturnTicketsNotReviewed();
+    }
 }

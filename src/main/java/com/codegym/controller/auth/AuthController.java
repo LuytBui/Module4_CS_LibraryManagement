@@ -86,15 +86,20 @@ public class AuthController {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         User currentUser = findUser.get();
 
-        JwtResponse jwtResponse = new JwtResponse(currentUser.getId(), jwt, userDetails.getUsername(), userDetails.getAuthorities());
+        JwtResponse jwtResponse = new JwtResponse();
+        jwtResponse.setId(currentUser.getId());
+        jwtResponse.setToken(jwt);
+        jwtResponse.setUsername(userDetails.getUsername());
+        jwtResponse.setRoles(userDetails.getAuthorities());
+        jwtResponse.setImage(currentUser.getImage());
         return new ResponseEntity<>(jwtResponse, HttpStatus.OK);
     }
 
     @PostMapping("/changePassword")
     public ResponseEntity<?> changeCurrentUserPassword(
-            @RequestBody ChangePasswordForm changePasswordForm,
-            Principal principal
+            @RequestBody ChangePasswordForm changePasswordForm
     ) {
+        Principal principal = SecurityContextHolder.getContext().getAuthentication();
         if (!changePasswordForm.confirmPasswordMatch()){
             ErrorMessage errorMessage = new ErrorMessage("Mật khẩu nhập lại không khớp!");
             return new ResponseEntity<>(errorMessage, HttpStatus.BAD_REQUEST);

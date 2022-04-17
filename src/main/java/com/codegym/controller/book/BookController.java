@@ -1,5 +1,6 @@
 package com.codegym.controller.book;
 
+import com.codegym.model.auth.ErrorMessage;
 import com.codegym.model.book.Book;
 import com.codegym.model.book.BookForm;
 import com.codegym.service.book.IBookService;
@@ -62,7 +63,7 @@ public class BookController {
         if (img.getSize() != 0) {
             String fileName = img.getOriginalFilename();
             long currentTime = System.currentTimeMillis();
-            fileName = currentTime + fileName;
+            fileName = currentTime + "_" + fileName;
             try {
                 FileCopyUtils.copy(img.getBytes(), new File(uploadPath + fileName));
             } catch (IOException e) {

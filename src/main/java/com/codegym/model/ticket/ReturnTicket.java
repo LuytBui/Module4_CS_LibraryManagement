@@ -25,11 +25,21 @@ public class ReturnTicket {
     private String returnDate;
 
     private String status;
-    private boolean accept;
+
+    @Column(columnDefinition = "boolean default false")
+    private boolean isAccepted;
+
+    @Column(columnDefinition = "boolean default false")
+    private boolean isReviewed;
+
+    public ReturnTicket(BorrowTicket borrowTicket) {
+        this.borrowTicket = borrowTicket;
+    }
 
     public static final String OVERDUE = "Quá hạn";
     public static final String RETURNED = "Đã trả";
     public static List<String> statuses = new ArrayList<>();
+
     static {
         statuses.add(OVERDUE);
         statuses.add(RETURNED);
