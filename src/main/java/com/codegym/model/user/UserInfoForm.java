@@ -22,6 +22,8 @@ public class UserInfoForm {
 
     private boolean active;
 
+    private Role role;
+
     private MultipartFile image;
 
 
