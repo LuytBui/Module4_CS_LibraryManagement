@@ -6,8 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.List;
-import java.util.Set;
+
 
 @Entity
 @Table(name = "carts")
@@ -22,4 +21,8 @@ public class Cart {
     @OneToOne
     @JoinColumn(name = "customer_id")
     private User customer;
+
+    public Cart(User customer) {
+        this.customer = customer;
+    }
 }

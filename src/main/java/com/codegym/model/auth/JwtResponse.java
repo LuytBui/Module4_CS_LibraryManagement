@@ -15,6 +15,7 @@ public class JwtResponse {
     private String token;
     private String type = "Bearer";
     private String username;
+    private String image;
     private Collection<? extends GrantedAuthority> roles;
 
     public JwtResponse(Long id, String token, String username, Collection<? extends GrantedAuthority> roles) {

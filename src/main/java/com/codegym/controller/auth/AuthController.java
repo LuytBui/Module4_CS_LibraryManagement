@@ -86,7 +86,12 @@ public class AuthController {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         User currentUser = findUser.get();
 
-        JwtResponse jwtResponse = new JwtResponse(currentUser.getId(), jwt, userDetails.getUsername(), userDetails.getAuthorities());
+        JwtResponse jwtResponse = new JwtResponse();
+        jwtResponse.setId(currentUser.getId());
+        jwtResponse.setToken(jwt);
+        jwtResponse.setUsername(userDetails.getUsername());
+        jwtResponse.setRoles(userDetails.getAuthorities());
+        jwtResponse.setImage(currentUser.getImage());
         return new ResponseEntity<>(jwtResponse, HttpStatus.OK);
     }
 

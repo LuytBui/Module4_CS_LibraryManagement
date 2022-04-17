@@ -68,6 +68,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/api/register").permitAll()
                 .antMatchers("/api/returnTickets/**").authenticated()
                 .antMatchers("/api/borrowTickets/**").authenticated()
+                .antMatchers("/api/carts/**").authenticated()
 
                 .antMatchers(HttpMethod.POST, "/api/books/**").hasAnyAuthority(Role.ROLE_ADMIN, Role.ROLE_LIBRARIAN)
                 .antMatchers(HttpMethod.PUT, "/api/books/**").hasAnyAuthority(Role.ROLE_ADMIN, Role.ROLE_LIBRARIAN)
@@ -79,11 +80,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.DELETE, "/api/categories/**").hasAnyAuthority(Role.ROLE_ADMIN, Role.ROLE_LIBRARIAN)
                 .antMatchers(HttpMethod.GET, "/api/categories/**").permitAll()
 
-
                 .antMatchers(HttpMethod.POST, "/api/manage_user/**").hasAuthority(Role.ROLE_ADMIN)
 
-
                 .antMatchers("/api/changePassword").authenticated()
+
         ;
 
         http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)

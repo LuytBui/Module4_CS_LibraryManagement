@@ -9,7 +9,6 @@ import org.springframework.web.multipart.MultipartFile;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserInfoForm {
-    private Long id;
 
     private String username;
 
@@ -21,6 +20,10 @@ public class UserInfoForm {
 
     private String occupation;
 
+    private boolean active;
+
     private MultipartFile image;
+
+
 
 }
