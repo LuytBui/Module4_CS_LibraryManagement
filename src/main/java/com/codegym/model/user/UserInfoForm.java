@@ -20,6 +20,10 @@ public class UserInfoForm {
 
     private String occupation;
 
+    private boolean active;
+
     private MultipartFile image;
+
+
 
 }

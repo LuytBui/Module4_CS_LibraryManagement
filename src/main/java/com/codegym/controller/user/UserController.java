@@ -66,6 +66,7 @@ public class UserController {
         updateUser.setPhone(userInfoForm.getPhone());
         updateUser.setAddress(userInfoForm.getAddress());
         updateUser.setOccupation(userInfoForm.getOccupation());
+        updateUser.setActive(userInfoForm.isActive());
 
         MultipartFile img = userInfoForm.getImage();
         if (img != null && img.getSize() != 0) {
