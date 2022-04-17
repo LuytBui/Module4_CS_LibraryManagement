@@ -1,8 +1,11 @@
 package com.codegym.controller.ticket;
 
 import com.codegym.model.auth.ErrorMessage;
+import com.codegym.model.book.Book;
 import com.codegym.model.ticket.BorrowTicket;
 import com.codegym.model.ticket.ReturnTicket;
+import com.codegym.service.book.IBookService;
+import com.codegym.service.ticket.IBorrowTicketDetailService;
 import com.codegym.service.ticket.IBorrowTicketService;
 import com.codegym.service.ticket.IReturnTicketService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +28,12 @@ public class ReturnTicketController {
 
     @Autowired
     private IBorrowTicketService borrowTicketService;
+
+    @Autowired
+    private IBookService bookService;
+
+    @Autowired
+    private IBorrowTicketDetailService borrowTicketDetailService;
 
     @GetMapping
     public ResponseEntity<Iterable<ReturnTicket>> findAll() {
@@ -86,8 +95,6 @@ public class ReturnTicketController {
 //            return new  ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
 
-
-
     //    @PostMapping("/{id}/accept") // thu thu chap thuan the tra
     // setAccept(true)
     // set Date
@@ -99,9 +106,26 @@ public class ReturnTicketController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         ReturnTicket returnTicket = returnTicketOptional.get();
+        BorrowTicket borrowTicket = returnTicket.getBorrowTicket();
+        List<Book> books = borrowTicketDetailService.findAllBookByBorrowTicket(borrowTicket);
+        // lấy ra borrowTicket
+        // lay ra danh sach books cua borrowTicket
+        // dùng for,+1 quantity cho từng book trong books
+
+        // set isReturned cho thằng borrow Ticket
+        // lưu borrowTIcket vào DB
+        for (Book book : books) {
+            book.setQuantity(book.getQuantity() + 1);
+            bookService.save(book);
+        }
+
+        borrowTicket.setReturned(true);
+        borrowTicketService.save(borrowTicket);
+
         returnTicket.setReviewed(true);
         returnTicket.setAccepted(true);
         returnTicket.setReturnDate(getCurrentTime());
+        returnTicketService.save(returnTicket);
         return new ResponseEntity<>(returnTicket, HttpStatus.OK);
     }
 
@@ -120,7 +144,7 @@ public class ReturnTicketController {
         ReturnTicket returnTicket = returnTicketOptional.get();
         returnTicket.setReviewed(true);
         returnTicket.setAccepted(false);
-        return new ResponseEntity<>(returnTicket, HttpStatus.OK);
+        return new ResponseEntity<>(returnTicketService.save(returnTicket), HttpStatus.OK);
     }
 
     public String getCurrentTime() {
@@ -134,5 +158,6 @@ public class ReturnTicketController {
         List<ReturnTicket> returnTickets = returnTicketService.findAllReturnTicketNotReviewed();
         return new ResponseEntity<>(returnTickets, HttpStatus.OK);
     }
+
 }
 
