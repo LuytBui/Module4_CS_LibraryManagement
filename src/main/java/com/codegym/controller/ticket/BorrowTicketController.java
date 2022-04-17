@@ -9,6 +9,10 @@ import com.codegym.service.ticket.IBorrowTicketDetailService;
 import com.codegym.service.ticket.IBorrowTicketService;
 import com.codegym.service.user.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,6 +26,8 @@ import java.util.Optional;
 @CrossOrigin("*")
 @RequestMapping("/api/borrowtickets")
 public class BorrowTicketController {
+    public static int PAGE_SIZE = 5;
+
     ErrorMessage doesntExist = new ErrorMessage("Thẻ mượn không tồn tại");
 
     @Autowired
@@ -36,9 +42,17 @@ public class BorrowTicketController {
     @Autowired
     private IBookService bookService;
 
+//    @GetMapping
+//    public ResponseEntity<Iterable<BorrowTicket>> findAllBorrowTickets() {
+//        return new ResponseEntity<>(borrowTicketService.findAll(), HttpStatus.OK);
+//    }
+
     @GetMapping
-    public ResponseEntity<Iterable<BorrowTicket>> findAllBorrowTickets() {
-        return new ResponseEntity<>(borrowTicketService.findAll(), HttpStatus.OK);
+    public ResponseEntity<Page<BorrowTicket>> findBorrowTicketNotReviewed(@RequestParam(name = "page") Long page) {
+        if (page == null) page = 0L;
+        Pageable pageable = PageRequest.of(page.intValue(), PAGE_SIZE);
+        Page<BorrowTicket> borrowTicketPage = borrowTicketService.findBorrowTicketNotReviewed(pageable);
+        return new ResponseEntity<>(borrowTicketPage, HttpStatus.OK);
     }
 
     @GetMapping("/customer/{id}")

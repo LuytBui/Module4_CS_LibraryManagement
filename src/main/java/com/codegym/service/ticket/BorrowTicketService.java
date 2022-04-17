@@ -44,4 +44,9 @@ public class BorrowTicketService implements IBorrowTicketService{
     public Iterable<BorrowTicket> findBorrowTicketByCustomer(User customer) {
         return borrowTicketRepository.findBorrowTicketByCustomer(customer);
     }
+
+    @Override
+    public Page<BorrowTicket> findBorrowTicketNotReviewed(Pageable pageable) {
+        return borrowTicketRepository.findBorrowTicketNotReviewed(pageable);
+    }
 }
