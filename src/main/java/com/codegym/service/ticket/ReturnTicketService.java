@@ -47,4 +47,9 @@ public class ReturnTicketService implements IReturnTicketService {
     public List<ReturnTicket> findAllReturnTicketNotReviewed() {
         return returnTicketRepository.findAllReturnTicketsNotReviewed();
     }
+
+    @Override
+    public List<ReturnTicket> findAllByCustomer_Id(Long userId) {
+        return returnTicketRepository.findAllByCustomer_Id(userId);
+    }
 }

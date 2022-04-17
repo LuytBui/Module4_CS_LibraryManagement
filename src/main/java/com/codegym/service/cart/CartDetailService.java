@@ -59,4 +59,8 @@ public class CartDetailService implements ICartDetailService {
     public void removeBookFromCart(Cart cart, Book book) {
         cartDetailRepository.deleteByCartAndBook(cart,book);
     }
+
+    public void removeAllBookFromCart(Cart cart) {
+        cartDetailRepository.deleteCartDetailByCart(cart);
+    }
 }
