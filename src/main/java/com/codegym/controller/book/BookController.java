@@ -1,6 +1,5 @@
 package com.codegym.controller.book;
 
-import com.codegym.model.auth.ErrorMessage;
 import com.codegym.model.book.Book;
 import com.codegym.model.book.BookForm;
 import com.codegym.service.book.IBookService;
@@ -9,10 +8,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.parameters.P;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -60,9 +57,9 @@ public class BookController {
     }
 
     @PostMapping
-    public ResponseEntity<Book> saveProduct(@ModelAttribute BookForm bookForm) {
+    public ResponseEntity<Book> saveBook(@ModelAttribute BookForm bookForm) {
         MultipartFile img = bookForm.getImage();
-        if (img.getSize() != 0) {
+        if (img != null && img.getSize() != 0) {
             String fileName = img.getOriginalFilename();
             long currentTime = System.currentTimeMillis();
             fileName = currentTime + "_" + fileName;
@@ -78,12 +75,12 @@ public class BookController {
     }
 
     @PostMapping("/{id}")
-    public ResponseEntity<Book> updateProduct(@PathVariable Long id, @ModelAttribute BookForm bookForm) {
+    public ResponseEntity<Book> updateBook(@PathVariable Long id, @ModelAttribute BookForm bookForm) {
         Optional<Book> bookOptional = bookService.findById(id);
         MultipartFile img = bookForm.getImage();
         if (bookOptional.isPresent()) {
             Book oldBook = bookOptional.get();
-            if (img.getSize() != 0) {
+            if (img != null && img.getSize() != 0) {
                 String fileName = img.getOriginalFilename();
                 long currentTime = System.currentTimeMillis();
                 fileName = currentTime + fileName;
@@ -106,7 +103,7 @@ public class BookController {
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
     @DeleteMapping("/{id}")
-    public ResponseEntity<Book> deleteProduct(@PathVariable Long id) {
+    public ResponseEntity<Book> deleteBook(@PathVariable Long id) {
         Optional<Book> bookOptional = bookService.findById(id);
         if (!bookOptional.isPresent()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
