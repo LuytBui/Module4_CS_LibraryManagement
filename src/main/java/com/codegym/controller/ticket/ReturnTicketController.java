@@ -28,7 +28,7 @@ import java.util.Optional;
 @CrossOrigin("*")
 @RequestMapping("/api/returnTickets")
 public class ReturnTicketController {
-    public final int PAGE_SIZE = 4;
+    public final int PAGE_SIZE = 5;
     @Autowired
     private IReturnTicketService returnTicketService;
 
