@@ -67,7 +67,7 @@ public class UserController {
         updateUser.setAddress(userInfoForm.getAddress());
         updateUser.setOccupation(userInfoForm.getOccupation());
         updateUser.setActive(userInfoForm.isActive());
-        if (currentUserIsAdmin){  // chỉ admin mới có quyền thay đổi role
+        if (currentUserIsAdmin && !currentUserIsOwner){  // chỉ admin mới có quyền thay đổi role
             updateUser.setRole(userInfoForm.getRole());
         }
 
