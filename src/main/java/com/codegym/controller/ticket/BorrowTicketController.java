@@ -1,10 +1,15 @@
 package com.codegym.controller.ticket;
 
+import com.codegym.exception.EmptyCartException;
 import com.codegym.model.auth.ErrorMessage;
 import com.codegym.model.book.Book;
+import com.codegym.model.cart.Cart;
 import com.codegym.model.ticket.BorrowTicket;
 import com.codegym.model.user.User;
+import com.codegym.repository.ICartDetailRepository;
 import com.codegym.service.book.IBookService;
+import com.codegym.service.cart.ICartDetailService;
+import com.codegym.service.cart.ICartService;
 import com.codegym.service.ticket.IBorrowTicketDetailService;
 import com.codegym.service.ticket.IBorrowTicketService;
 import com.codegym.service.user.IUserService;
@@ -24,7 +29,7 @@ import java.util.Optional;
 
 @RestController
 @CrossOrigin("*")
-@RequestMapping("/api/borrowtickets")
+@RequestMapping("/api/borrowTickets")
 public class BorrowTicketController {
     public static int PAGE_SIZE = 5;
 
@@ -42,10 +47,11 @@ public class BorrowTicketController {
     @Autowired
     private IBookService bookService;
 
-//    @GetMapping
-//    public ResponseEntity<Iterable<BorrowTicket>> findAllBorrowTickets() {
-//        return new ResponseEntity<>(borrowTicketService.findAll(), HttpStatus.OK);
-//    }
+    @Autowired
+    private ICartService cartService;
+
+    @Autowired
+    private ICartDetailService cartDetailService;
 
     @GetMapping
     public ResponseEntity<Page<BorrowTicket>> findBorrowTicketNotReviewed(@RequestParam(name = "page") Long page) {
@@ -62,15 +68,6 @@ public class BorrowTicketController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(borrowTicketService.findBorrowTicketByCustomer(userOptional.get()), HttpStatus.OK);
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<?> findBorrowedTicketById(@PathVariable Long id) {
-        Optional<BorrowTicket> borrowTicketOptional = borrowTicketService.findById(id);
-        if (!borrowTicketOptional.isPresent()) {
-            return new ResponseEntity<>(doesntExist, HttpStatus.NOT_FOUND);
-        }
-        return new ResponseEntity<>(borrowTicketOptional.get(), HttpStatus.OK);
     }
 
     @PostMapping
@@ -115,13 +112,13 @@ public class BorrowTicketController {
                 message += "Sách " + book.getName() + " đã hết, ";
             }
         }
-        if (outOfStock){
+        if (outOfStock) {
             ErrorMessage errorMessage = new ErrorMessage(message);
             return new ResponseEntity<>(errorMessage, HttpStatus.BAD_REQUEST);
         }
 
 
-        for (Book book: books) {
+        for (Book book : books) {
             book.setQuantity(book.getQuantity() - 1);
             bookService.save(book);
         }
@@ -167,6 +164,40 @@ public class BorrowTicketController {
         if (!borrowTicketOptional.isPresent()) {
             return new ResponseEntity<>(doesntExist, HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity<>(borrowTicketOptional, HttpStatus.OK);
+        return new ResponseEntity<>(borrowTicketOptional.get(), HttpStatus.OK);
     }
+
+    @PostMapping("/{userId}")
+    public ResponseEntity<?> createBorrowTicket(@PathVariable Long userId, @RequestParam int duration) {
+        Optional<User> userOptional = userService.findById(userId);
+        if (!userOptional.isPresent()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        try {
+            User user = userOptional.get();
+            Cart cart = cartService.findCartByUser_Id(userId);
+
+
+            BorrowTicket borrowTicket = borrowTicketService.createBorrowTicket(user, duration);
+            cartDetailService.removeAllBookFromCart(cart);// remove all books from cart
+            return new ResponseEntity<>(borrowTicket, HttpStatus.CREATED);
+        } catch (EmptyCartException e) {
+            ErrorMessage errorMessage = new ErrorMessage("Giỏ sách đang trống");
+            return new ResponseEntity<>(errorMessage, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping("/{userId}")
+    public ResponseEntity<?> getBorrowTicketsOfUser(@PathVariable Long userId) {
+        Optional<User> userOptional = userService.findById(userId);
+        if (!userOptional.isPresent()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        Iterable<BorrowTicket> borrowTickets = borrowTicketService.findBorrowTicketByCustomer(userOptional.get());
+        return new ResponseEntity<>(borrowTickets, HttpStatus.OK);
+    }
+
+
 }

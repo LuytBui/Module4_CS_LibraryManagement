@@ -67,6 +67,9 @@ public class UserController {
         updateUser.setAddress(userInfoForm.getAddress());
         updateUser.setOccupation(userInfoForm.getOccupation());
         updateUser.setActive(userInfoForm.isActive());
+        if (currentUserIsAdmin){  // chỉ admin mới có quyền thay đổi role
+            updateUser.setRole(userInfoForm.getRole());
+        }
 
         MultipartFile img = userInfoForm.getImage();
         if (img != null && img.getSize() != 0) {

@@ -4,10 +4,12 @@ import com.codegym.model.auth.ErrorMessage;
 import com.codegym.model.book.Book;
 import com.codegym.model.ticket.BorrowTicket;
 import com.codegym.model.ticket.ReturnTicket;
+import com.codegym.model.user.User;
 import com.codegym.service.book.IBookService;
 import com.codegym.service.ticket.IBorrowTicketDetailService;
 import com.codegym.service.ticket.IBorrowTicketService;
 import com.codegym.service.ticket.IReturnTicketService;
+import com.codegym.service.user.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -39,6 +41,9 @@ public class ReturnTicketController {
     @Autowired
     private IBorrowTicketDetailService borrowTicketDetailService;
 
+    @Autowired
+    private IUserService userService;
+
     @GetMapping
     public ResponseEntity<Iterable<ReturnTicket>> findAll() {
         Iterable<ReturnTicket> returnTickets = returnTicketService.findAll();
@@ -46,14 +51,22 @@ public class ReturnTicketController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ReturnTicket> findById(@PathVariable Long id) {
-        Optional<ReturnTicket> returnTicket = returnTicketService.findById(id);
-        if (!returnTicket.isPresent()) {
+    public ResponseEntity<?> findById(@PathVariable Long id){
+        Optional<ReturnTicket> returnTicketOptional = returnTicketService.findById(id);
+        if (!returnTicketOptional.isPresent())
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-        return new ResponseEntity<>(returnTicket.get(), HttpStatus.OK);
+        return new ResponseEntity<>(returnTicketOptional.get(), HttpStatus.OK);
     }
 
+    @GetMapping("/customer/{userId}")
+    public ResponseEntity<?> findReturnTicketByUser(@PathVariable Long userId) {
+        Optional<User>  userOptional = userService.findById(userId);
+        if (!userOptional.isPresent()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        List<ReturnTicket> returnTickets = returnTicketService.findAllByCustomer_Id(userId);
+        return new ResponseEntity<>(returnTickets, HttpStatus.OK);
+    }
 
     @PostMapping("/save-return-for-borrow/{borrowTicketId}")
     public ResponseEntity<ReturnTicket> saveReturnTicket(@PathVariable Long borrowTicketId) {
@@ -65,7 +78,9 @@ public class ReturnTicketController {
 
         borrowTicket.setHasReturnTicket(true);
         borrowTicketService.save(borrowTicket);
-        return new ResponseEntity<>(returnTicketService.save(returnTicket), HttpStatus.CREATED);
+        returnTicket.setBorrowTicket(borrowTicket);
+        returnTicketService.save(returnTicket);
+        return new ResponseEntity<>(returnTicket, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
@@ -88,21 +103,6 @@ public class ReturnTicketController {
         return new ResponseEntity<>(optionalReturnTicket.get(), HttpStatus.OK);
     }
 
-//    @GetMapping("/{id}/books")  // lay ra danh sach books cua the tra nay
-//    public ResponseEntity<Iterable<Book>>
-//@GetMapping("/{id/books}")
-//public ResponseEntity<Iterable<Book>> findAllBooksByReturnTicketID(@PathVariable Long id, @RequestBody ReturnTicket returnTicket, @RequestBody BorrowTicketDetail){
-//        Long bookId = borr
-//        Long borrowTicketId = returnTicket.getBorrowTicket().getId();
-//        Optional<ReturnTicket> returnTicketOptional = returnTicketService.findById(id);
-//        if (!returnTicketOptional.isPresent()){
-//            return new  ResponseEntity<>(HttpStatus.BAD_REQUEST);
-
-
-    //    @PostMapping("/{id}/accept") // thu thu chap thuan the tra
-    // setAccept(true)
-    // set Date
-    // set status: ReturnTicket.statuses
     @PostMapping("/{id}/accept")
     public ResponseEntity<?> acceptReturnTicket(@PathVariable Long id) {
         Optional<ReturnTicket> returnTicketOptional = returnTicketService.findById(id);
@@ -148,6 +148,11 @@ public class ReturnTicketController {
         ReturnTicket returnTicket = returnTicketOptional.get();
         returnTicket.setReviewed(true);
         returnTicket.setAccepted(false);
+
+        BorrowTicket borrowTicket = returnTicket.getBorrowTicket();
+        borrowTicket.setHasReturnTicket(false);
+        borrowTicketService.save(borrowTicket);
+
         return new ResponseEntity<>(returnTicketService.save(returnTicket), HttpStatus.OK);
     }
 

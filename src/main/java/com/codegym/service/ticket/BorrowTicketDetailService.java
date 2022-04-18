@@ -18,17 +18,17 @@ public class BorrowTicketDetailService implements IBorrowTicketDetailService{
 
     @Override
     public Iterable<BorrowTicketDetail> findAll() {
-        return null;
+        return borrowTicketDetailRepository.findAll();
     }
 
     @Override
     public BorrowTicketDetail save(BorrowTicketDetail borrowTicketDetail) {
-        return null;
+        return borrowTicketDetailRepository.save(borrowTicketDetail);
     }
 
     @Override
     public void deleteById(Long id) {
-
+        borrowTicketDetailRepository.deleteById(id);
     }
 
     @Override

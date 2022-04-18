@@ -24,4 +24,7 @@ public interface ICartDetailRepository extends PagingAndSortingRepository<CartDe
     @Modifying
     void deleteByCartAndBook(Cart cart,Book book);
 
+    @Modifying
+    void deleteCartDetailByCart(Cart cart);
+
 }

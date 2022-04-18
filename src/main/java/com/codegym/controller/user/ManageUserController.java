@@ -51,4 +51,13 @@ public class ManageUserController {
         return new ResponseEntity<>(librarians, HttpStatus.OK);
     }
 
+    @GetMapping("/customers")
+    public ResponseEntity<?> findAllCustomer(@RequestParam(name="page") Long page){
+        if (page == null) page = 0L;
+        Pageable pageable = PageRequest.of(page.intValue(), PAGE_SIZE);
+        Page<User> librarians = userService.finddAllUserByRole_Name(Role.ROLE_CUSTOMER, pageable);
+
+        return new ResponseEntity<>(librarians, HttpStatus.OK);
+    }
+
 }

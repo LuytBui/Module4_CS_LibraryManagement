@@ -1,5 +1,6 @@
 package com.codegym.service.ticket;
 
+import com.codegym.exception.EmptyCartException;
 import com.codegym.model.ticket.BorrowTicket;
 import com.codegym.model.user.User;
 import com.codegym.service.IGeneralService;
@@ -12,4 +13,8 @@ public interface IBorrowTicketService extends IGeneralService<BorrowTicket> {
     Iterable<BorrowTicket> findBorrowTicketByCustomer(User customer);
 
     Page<BorrowTicket> findBorrowTicketNotReviewed(Pageable pageable);
+
+
+
+    BorrowTicket createBorrowTicket(User user, int duration) throws EmptyCartException;
 }

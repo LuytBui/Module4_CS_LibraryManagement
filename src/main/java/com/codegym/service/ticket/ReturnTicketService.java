@@ -50,4 +50,8 @@ public class ReturnTicketService implements IReturnTicketService {
         return returnTicketRepository.findAllReturnTicketsNotReviewed(pageable);
     }
 
+    @Override
+    public List<ReturnTicket> findAllByCustomer_Id(Long userId) {
+        return returnTicketRepository.findAllByCustomer_Id(userId);
+    }
 }
