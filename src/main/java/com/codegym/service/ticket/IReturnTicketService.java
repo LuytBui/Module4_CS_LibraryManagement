@@ -12,4 +12,5 @@ import java.util.Optional;
 public interface IReturnTicketService extends IGeneralService<ReturnTicket> {
     Optional<ReturnTicket> findByBorrowTicketId(Long borrowTicketId);
     Page<ReturnTicket> findAllReturnTicketsNotReviewed (Pageable pageable);
+    List<ReturnTicket> findAllByCustomer_Id(Long userId);
 }

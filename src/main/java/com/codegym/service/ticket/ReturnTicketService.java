@@ -18,7 +18,6 @@ public class ReturnTicketService implements IReturnTicketService {
     @Autowired
     private IReturnTicketRepository returnTicketRepository;
 
-
     @Override
     public Iterable<ReturnTicket> findAll() {
         return returnTicketRepository.findAll();
