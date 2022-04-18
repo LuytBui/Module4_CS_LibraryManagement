@@ -5,6 +5,7 @@ import com.codegym.model.user.Role;
 import com.codegym.model.user.User;
 import com.codegym.model.user.UserInfoForm;
 import com.codegym.service.user.IUserService;
+import com.codegym.validate.ValidateHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -42,10 +43,18 @@ public class UserController {
         return new ResponseEntity<>(user.get(), HttpStatus.OK);
     }
 
-
-
     @PostMapping("/{id}")
     public ResponseEntity<?> updateUser(@PathVariable Long id, @ModelAttribute UserInfoForm userInfoForm) {
+        if (!ValidateHelper.validEmail(userInfoForm.getEmail())) {
+            ErrorMessage errorMessage = new ErrorMessage("Email không đúng định dạng");
+            return new ResponseEntity<>(errorMessage, HttpStatus.UNAUTHORIZED);
+        }
+
+        if (!ValidateHelper.validPhone(userInfoForm.getPhone())) {
+            ErrorMessage errorMessage = new ErrorMessage("Số điện thoại không đúng định dạng");
+            return new ResponseEntity<>(errorMessage, HttpStatus.UNAUTHORIZED);
+        }
+
         Optional<User> updateUserOptional = userService.findById(id);
         if (!updateUserOptional.isPresent())
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -57,7 +66,7 @@ public class UserController {
         boolean currentUserIsOwner = logginUser.getId().equals(id);
         boolean authorized = currentUserIsAdmin || currentUserIsOwner;
 
-        if (!authorized){
+        if (!authorized) {
             ErrorMessage errorMessage = new ErrorMessage("Không có quyền sửa thông tin người dùng");
             return new ResponseEntity<>(errorMessage, HttpStatus.UNAUTHORIZED);
         }
@@ -67,7 +76,7 @@ public class UserController {
         updateUser.setAddress(userInfoForm.getAddress());
         updateUser.setOccupation(userInfoForm.getOccupation());
         updateUser.setActive(userInfoForm.isActive());
-        if (currentUserIsAdmin && !currentUserIsOwner){  // chỉ admin mới có quyền thay đổi role
+        if (currentUserIsAdmin && !currentUserIsOwner) {  // chỉ admin mới có quyền thay đổi role
             updateUser.setRole(userInfoForm.getRole());
         }
 

@@ -177,8 +177,6 @@ public class BorrowTicketController {
         try {
             User user = userOptional.get();
             Cart cart = cartService.findCartByUser_Id(userId);
-
-
             BorrowTicket borrowTicket = borrowTicketService.createBorrowTicket(user, duration);
             cartDetailService.removeAllBookFromCart(cart);// remove all books from cart
             return new ResponseEntity<>(borrowTicket, HttpStatus.CREATED);

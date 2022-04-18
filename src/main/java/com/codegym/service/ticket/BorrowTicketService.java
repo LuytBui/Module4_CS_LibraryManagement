@@ -73,13 +73,15 @@ public class BorrowTicketService implements IBorrowTicketService {
 
     @Override
     public BorrowTicket createBorrowTicket(User user, int duration) throws EmptyCartException {
+        Cart cart = cartService.findCartByUser_Id(user.getId());
+        List<Book> books = cartDetailService.findAllBookInCart(cart);
+        if (books.size() == 0) {
+            throw new EmptyCartException();
+        }
+
         BorrowTicket borrowTicket = new BorrowTicket();
         borrowTicket = borrowTicketService.save(borrowTicket);  // important: get an id for borrowTicket
         borrowTicket.setCustomer(user);
-        Cart cart = cartService.findCartByUser_Id(user.getId());
-
-        List<Book> books = cartDetailService.findAllBookInCart(cart);
-        if (books.size() == 0) throw new EmptyCartException();
 
         for (Book book : books) {
             BorrowTicketDetail borrowTicketDetail = new BorrowTicketDetail();
