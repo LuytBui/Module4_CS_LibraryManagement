@@ -1,8 +1,10 @@
 package com.codegym.controller.book;
 
+import com.codegym.model.auth.ErrorMessage;
 import com.codegym.model.book.Book;
 import com.codegym.model.book.BookForm;
 import com.codegym.service.book.IBookService;
+import com.codegym.validate.ValidateHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -57,7 +59,8 @@ public class BookController {
     }
 
     @PostMapping
-    public ResponseEntity<Book> saveBook(@ModelAttribute BookForm bookForm) {
+    public ResponseEntity<?> saveBook(@ModelAttribute BookForm bookForm) {
+
         MultipartFile img = bookForm.getImage();
         if (img != null && img.getSize() != 0) {
             String fileName = img.getOriginalFilename();
@@ -75,7 +78,21 @@ public class BookController {
     }
 
     @PostMapping("/{id}")
-    public ResponseEntity<Book> updateBook(@PathVariable Long id, @ModelAttribute BookForm bookForm) {
+    public ResponseEntity<?> updateBook(@PathVariable Long id, @ModelAttribute BookForm bookForm) {
+
+        if (!ValidateHelper.notNegative(bookForm.getQuantity())) {
+            ErrorMessage errorMessage = new ErrorMessage("Số lượng không thể là số âm");
+            return new ResponseEntity<>(errorMessage, HttpStatus.UNAUTHORIZED);
+        }
+        if (!ValidateHelper.notBlank(bookForm.getName())) {
+            ErrorMessage errorMessage = new ErrorMessage("Tên sách không được bỏ trống");
+            return new ResponseEntity<>(errorMessage, HttpStatus.UNAUTHORIZED);
+        }
+        if (bookForm.getCategory() == null) {
+            ErrorMessage errorMessage = new ErrorMessage("Danh mục không được bỏ trống");
+            return new ResponseEntity<>(errorMessage, HttpStatus.UNAUTHORIZED);
+        }
+
         Optional<Book> bookOptional = bookService.findById(id);
         MultipartFile img = bookForm.getImage();
         if (bookOptional.isPresent()) {
